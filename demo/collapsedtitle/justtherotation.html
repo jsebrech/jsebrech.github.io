@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Rotated text demo</title>
+	<style type="text/css">
+	  .text-container { 
+	    /* SVG text node */
+	    fill: red; 
+	    /* IE div */
+	    color: red;
+	  }
+	</style>
+</head>
+<body style="margin: 8px;">
+  <div id="container" style="font-family: Tahoma; font-size: 12px; margin-top: 1em;">
+    Rotated text example
+    <script type="text/javascript">
+      var container = document.getElementById('container');
+      
+      function supportsSvg() {
+        return document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1")
+      }
+      // safari 3+, opera 8+, chrome, firefox, gutenberg bibles, clay tablets, ...
+      if (supportsSvg()) {
+        document.write('<br>Using SVG for rotated text<br><br>');
+        
+        var SVGNS = 'http://www.w3.org/2000/svg';
+        var svg = document.createElementNS(SVGNS, 'svg');
+        container.appendChild(svg);
+        var textBlock = document.createElementNS(SVGNS, 'text');
+        textBlock.setAttribute('transform', 'rotate(90)');
+        textBlock.setAttribute('class', 'text-container');
+        svg.appendChild(textBlock);
+      // no SVG support? assume it's IE and use writing-mode instead
+      } else {
+        document.write('<br>Falling back to writing-mode instead of SVG for IE<br><br>');
+        
+        var textBlock = document.createElement('span');
+        container.appendChild(textBlock);
+        textBlock.style.writingMode = 'tb-rl';          
+        textBlock.style.whiteSpace = 'nowrap';
+        textBlock.className = 'text-container';
+      };
+      var text = document.createTextNode('rotated text');
+      textBlock.appendChild(text);
+    </script>
+  </div>
+</body>
+</html>

@@ -1,0 +1,2 @@
+php_value zend.multibyte 1
+php_value zend.script_encoding UTF-16

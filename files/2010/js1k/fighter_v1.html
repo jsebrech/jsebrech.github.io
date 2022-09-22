@@ -1,0 +1,114 @@
+<!doctype html> 
+<html> 
+  <head> 
+    <title>JS1k submission - fighter</title> 
+    <meta charset="utf-8" /> 
+  </head> 
+  <body> 
+    <canvas id="c"></canvas> 
+    <script> 
+w=300;h=100;m=Math;s=0;q=0;r=53;c=document.getElementById('c');c.style.border='1px solid';c.width=w;c.height=h;c=c.getContext('2d');p={x:10,y:h/2,s:8};f=[];k=[];this.onkeydown=function(e){k[e.which]=1;if(k[32]&&!q){f.push({x:p.x,y:p.y,s:4,d:-3,b:1})}};this.onkeyup=function(e){k[e.which]=0};function di(p){c.beginPath();c.moveTo(p.x,p.y);c.lineTo(p.x-p.s,p.y+(p.b?1:5));c.lineTo(p.x-p.s,p.y-(p.b?1:5));c.fill()}g=0;gb=0;setInterval(function(){r=m.max(10,r-0.02);if(k[39])p.x+=2;if(k[37])p.x-=2;if(k[38])p.y-=2;if(k[40])p.y+=2;g=(g+1)%m.round(r);gb=(gb+1)%100;if(!g)f.push({x:w,y:h*m.random(),s:-8,d:1});c.clearRect(0,0,w,h);i=f.length;while(i--){o=f[i];o.x-=o.d;di(o);if(o.b&&o.d<0){j=f.length;while(j--){z=f[j];if(z&&!z.b&&(z.x-o.x)<1&&(z.x-o.x)>-7&&(m.abs(z.y-o.y)<4)){if(i>j)i--;f.splice(j,1);f.splice(i,1);s++}}};if(!q&&o.d>0&&(p.x-o.x)>2&&(p.x-o.x)<8&&m.abs(o.y-p.y)<5){q=1;f.splice(i,1)};if(!gb&&!o.b)f.push({x:o.x,y:o.y,s:-4,d:2,b:1});if((o.x<-8)||(o.x>w+9)){f.splice(i,1)}};if(!q)di(p);c.fillText(s,2,10)},40);
+    </script> 
+    <div style="font: 12px sans-serif;">
+    <p><b>My entry for the <a href="http://js1k.com">js1k</a> competition. Clocks in at 1018 bytes of JavaScript. Arrow keys move, space fires.</b></p>
+    <p>As per the competition rules, this won't work in IE, except perhaps version 9 (untested). The game gradually speeds up, so there's a degree of difficulty in getting a high score.</p>
+    <p>Version: 1.0</p>
+    <p>Feedback: joeri (at) sebrechts.net</p>
+    <p>View source for minified source code.</p>
+    <p>Documented source code:</p>
+    <pre style="height: 200px; overflow: auto; border: 1px solid gray;">
+  w = 300; h = 100;
+  m = Math;
+  s = 0; // score
+  q = 0; // if 1, game over, q = quit
+  r = 53; // generate a fighter every this many frames, 1 frame per 40 ms
+  c=document.getElementById('c');
+  c.style.border = '1px solid';
+  c.width = w; c.height = h;
+  c=c.getContext('2d');
+  // fighters
+  // s: delta x for drawing
+  p = {x: 10, y: h/2, s: 8}; // player 1
+  f = []; // enemy fighters and bullets, bullets have b: 1
+  // key state
+  k=[];
+  this.onkeydown = function(e) { 
+    // which is shorter than keyCode
+    k[e.which] = 1;
+    if (k[32] && !q) { 
+      // d: inverted x direction travelling speed
+      f.push({x: p.x, y: p.y, s: 4, d: -3, b: 1});
+    }; 
+  }; 
+  this.onkeyup = function(e) { k[e.which] = 0; };
+  
+  // di = draw item
+  // p.s = scale factor for flipping rendering across the x axis
+  function di(p) {
+    c.beginPath();
+    c.moveTo(p.x, p.y);
+    c.lineTo(p.x-p.s, p.y+(p.b?1:5));
+    c.lineTo(p.x-p.s, p.y-(p.b?1:5));
+    c.fill();
+  }
+  g=0; gb=0;
+  setInterval(function() {
+    // speed up the rate enemy fighters are generated, up to 1 every 10 frames
+    r=m.max(10, r-0.02);
+    // update the position of the main fighter
+    // no clipping because that takes too many bytes!
+    if (k[39]) p.x += 2; // right
+    if (k[37]) p.x -= 2; // left
+    if (k[38]) p.y -= 2; // up
+    if (k[40]) p.y += 2; // down
+    // should we generate an enemy fighter and enemy bullets?
+    // value is inverted: g=0 -> generate fighter, gb=0 -> generate bullet
+    g = (g+1)%m.round(r);
+    gb = (gb+1)%100;
+    // generate enemy fighter
+    if (!g) f.push({x: w, y: h*m.random(), s: -8, d: 1});
+    // draw everything
+    c.clearRect(0, 0, w, h);
+    i=f.length;
+    while (i--) {
+      o=f[i];
+      // animate enemy fighters and bullets
+      o.x -= o.d;
+      di(o);
+      // if this is a player 1 bullet, 
+      // do collision detection against enemy fighters`
+      // o.d < 0: player 1 object
+      if (o.b && o.d<0) {
+        // for every enemy fighter
+        j=f.length;
+        while (j--) {
+          z=f[j];
+          // if collision, remove bullet and fighter and increase score
+          // !z.b = not a bullet
+          if (z && !z.b && (z.x-o.x)<1 && (z.x-o.x)>-7 && (m.abs(z.y-o.y) < 4)) {
+            if (i>j) i--;
+            f.splice(j, 1);
+            f.splice(i, 1);
+            s++;
+          };
+        };
+      };
+      // do collision detection between player 1 and enemy objects
+      // o.d>0 : enemy object
+      if (!q && o.d>0 && (p.x-o.x)>2 && (p.x-o.x)<8 && m.abs(o.y-p.y)<5) {
+        q=1;
+        f.splice(i, 1);
+      };
+      // if this is a fighter, and not a bullet, 
+      // and it's time to fire bullets, then fire a bullet
+      if (!gb && !o.b) f.push({x: o.x, y: o.y, s: -4, d: 2, b: 1});
+      // remove them if they go out of the screen
+      if ((o.x < -8) || (o.x > w+9)) { f.splice(i, 1); };
+    };
+    if (!q) di(p);
+    c.fillText(s, 2, 10);
+  }, 40);
+    </pre>
+    </div>
+  </body> 
+</html>

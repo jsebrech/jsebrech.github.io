@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Collapsed panel title demo</title>
+  <link rel="stylesheet" type="text/css" href="http://extjs.cachefly.net/ext-3.1.0/resources/css/ext-all.css" />
+  <style type="text/css">
+    .info-icon { background-image: url(information.png) !important; }
+  </style>
+  <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.1.0/adapter/ext/ext-base.js"></script>
+  <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.1.0/ext-all.js"></script>
+  <script type="text/javascript" src="Ext.ux.PanelCollapsedTitle.js"></script>
+</head>
+<body style="margin: 8px;">
+  <div id="container"></div>
+  <script type="text/javascript">
+    Ext.onReady(function() {
+      var panel = new Ext.Panel({
+        layout: 'border',
+        renderTo: 'container',
+        width: 400,
+        height: 200,
+        items: [{
+          xtype: 'panel',
+          region: 'center',
+          html: 'content'
+        },{
+          xtype: 'panel',
+          title: 'East with icon',
+          region: 'east',
+          iconCls: 'info-icon',
+          collapsedIconCls: 'info-icon',
+          width: 100,
+          collapsible: true,
+          collapsed: true,
+          plugins: [Ext.ux.PanelCollapsedTitle]
+        },{
+          xtype: 'panel',
+          title: 'South with icon',
+          iconCls: 'info-icon',
+          collapsedIconCls: 'info-icon',
+          region: 'south',
+          height: 50,
+          collapsible: true,
+          collapsed: true,
+          plugins: [Ext.ux.PanelCollapsedTitle]
+        },{
+          xtype: 'panel',
+          title: 'North without icon',
+          region: 'north',
+          height: 50,
+          collapsible: true,
+          collapsed: true,
+          plugins: [Ext.ux.PanelCollapsedTitle]
+        },{
+          xtype: 'panel',
+          title: 'West without icon',
+          region: 'west',
+          width: 100,
+          collapsible: true,
+          collapsed: true,
+          plugins: [Ext.ux.PanelCollapsedTitle]
+        }]
+      });
+    })
+  </script>
+  <br>
+  <a href="justtherotation.html">Simplified example with just the rotated text, no ExtJS</a>
+</body>
+</html>

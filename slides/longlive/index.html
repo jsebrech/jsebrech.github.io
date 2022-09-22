@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Long live the codebase</title>
+
+		<meta name="description" content="A presentation on how to deal with long-lived codebases">
+		<meta name="author" content="Joeri Sebrechts">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/moon.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+    <style type="text/css">
+      body { background-color: #0f132e; }
+      .reveal { color: #abbbbb; }
+      a { color: #ea9921 !important; }
+      .opaque { background-color: rgba(30, 30, 30, 0.7) !important; }
+      .opaque-inline {
+        background-color: rgba(20, 20, 20, 0.8) !important;
+        display: inline-block !important;
+        padding: 0.5em 1em !important;
+      }
+      .tags span {
+        display: inline-block;
+        background-color: rgba(20, 20, 20, 0.8) !important;
+        margin-right: 0.5em;
+        margin-bottom: 0.5em;
+      }
+    </style>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+   
+      <img src="images/logo.png" style="position: fixed; left: 12pt; bottom: 10pt; width: 60px; height: 60px; z-index: 1000;">
+      <img src="images/phpbnl.png" style="position: fixed; right: 12pt; bottom: 10pt; height: 60px; z-index: 1000;">
+
+		<div class="reveal">
+
+			<div class="slides">
+
+				<section>
+          <p style="color: #999;">the code is deprecated</p>
+					<h1>Long live the codebase</h1>
+					<p>
+						<a href="http://sebrechts.net">Joeri Sebrechts</a> <span style="color: #999;">|</span> <a href="http://twitter.com/joeri_s">@joeri_s</a>
+					</p>
+				</section>
+
+        <section data-background="images/molen-wide.jpg" data-background-size="contain">
+          <div style="position: absolute; left: 55%; width: 422px; color: white; padding-top: 5%; text-align: left;">
+            <h3>Joeri Sebrechts</h3>
+            js@mcs.fm<br>
+            10
+          </div>
+        </section>
+
+        <section>
+          <h2>1996</h2>
+        </section>
+
+        <section>
+          <img src="images/charlesanddiana.jpg" style="height: 600px;">
+          <aside class="notes">
+            Charles and Diana announce their divorce.
+          </aside>
+        </section>
+
+        <section>
+          <img src="images/dvd.jpg" style="height: 600px;">
+          <aside class="notes">
+            Toshiba launches the SD-3000, the first DVD player.
+            <a href="http://commons.wikimedia.org/wiki/File:Dvd_cd_disk.jpg">Image: wikipedia</a>
+          </aside>
+        </section>
+
+        <section>
+          <img src="images/netscape3.png">
+          <aside class="notes">
+            Netscape 3 is the browser of choice.
+            There is no google, 640x480 is a common screen resolution,
+            there were <a href="http://royal.pingdom.com/2008/09/16/the-web-in-1996-1997/">about 100.000 websites</a> in the world.
+          </aside>
+        </section>
+
+        <section>
+          <p>MCS starts <em>my</em>MCS project</p>
+          <img src="images/earlyefms.png">
+        </section>
+
+        <section data-background="#480000">
+          <h2>Choose a platform</h2>
+        </section>
+
+        <section>
+          <h3>Microsoft Visual Basic 4.0</h3>
+          <img src="images/visualbasic4.gif">
+          <aside class="notes">
+            Visual Basic 4 was viable, but was too limiting,
+            suffered from performance issues,
+            and was difficult to deploy (vb runtime dll's).
+          </aside>
+        </section>
+
+        <section>
+          <h3>Microsoft Visual C++ 4.0</h3>
+          <img src="images/visualcpp4.gif">
+          <aside class="notes">
+            Visual C++ 4 was Microsoft's high-end solution for desktop apps.
+            While powerful it was cumbersome to use.
+          </aside>
+        </section>
+
+        <section>
+          <p>The angular.js of its day</p>
+          <blockquote>
+            If you need to develop 32-bit solutions for Windows, look no further.<br>
+            -- Infoworld
+          </blockquote>
+          <aside class="notes">
+            <a href="https://books.google.be/books?id=wT4EAAAAMBAJ&lpg=PA97&ots=e7uxJC4r8k&dq=borland%20%22delphi%201.0%22%20review&pg=PA97#v=onepage&q=borland%20%22delphi%201.0%22%20review&f=false">Source</a> for quote.
+          </aside>
+        </section>
+
+        <section>
+          <h3>Borland Delphi</h3>
+          <img src="images/delphi1.png">
+          <aside class="notes">
+            We also picked Oracle, because it was the most popular,
+            and because of the golden opportunity for puns.
+          </aside>
+        </section>
+
+        <section data-background="#004000">
+          <h3>Every choice is wrong eventually</h3>
+          <aside class="notes">
+            It doesn't matter what you choose,
+            after 5 years it will be perceived as old and busted.
+          </aside>
+        </section>
+
+        <section data-background="#004000">
+          <h3>Old and busted is ok</h3>
+          <h3>Old and dead is not</h3>
+          <aside class="notes">
+            Avoid dead-end (closed) technologies.
+            Hypes are dangerous, because they tend to blow over.
+            If you have the source code, you can upgrade at your own pace,
+            and you can take over maintenance if it comes to it.
+          </aside>
+        </section>
+
+        <section data-background="#480000">
+          <h2>Choose an architecture</h2>
+        </section>
+
+        <section>
+          <h3>1996: LAN, RAD and client/server</h3>
+          <img src="images/datasets.png">
+        </section>
+
+        <section data-background="#004000">
+          <h3>Popular !== Good</h3>
+          <aside class="notes">
+            The deep integration between GUI and DB was a bad idea.
+            Had we chosen a three-tier architecture,
+            we could have repurposed the existing codebase to the web.
+            Instead we had to build a web product line from scratch.
+          </aside>
+        </section>
+
+        <section data-background="images/startrail.jpg">
+          <aside class="notes">
+            And so we start programming...
+            <a href="http://commons.wikimedia.org/wiki/File:Star_trails_over_the_ESO_3.6-metre_telescope.jpg">Image: wikipedia</a>
+          </aside>
+        </section>
+
+        <section data-background="images/solesurvivor.jpg">
+          <blockquote class="fragment opaque">
+            <br>
+            Get a lifetime Prozac subscription<br>
+            -- Frank<br>
+            &nbsp;
+          </blockquote>
+          <aside class="notes">
+            There was one lone developer who was there at the start,
+            and is still with us now. The Frank. This is his advice.<br>
+            <a href="http://commons.wikimedia.org/wiki/File:Remnants_of_an_army2.jpg">Image: wikipedia</a>
+          </aside>
+        </section>
+
+        <section>
+          <h3>Why?</h3>
+          <ul>
+            <li class="fragment">Warpitecture</li>
+            <li class="fragment">Featurism</li>
+            <li class="fragment">Refuctoring</li>
+          </ul>
+          <aside class="notes">
+            Warpitecture = the tendency of first-time designers to mess up.<br>
+            Featurism = the tendency of codebases to rot under feature pressure.<br>
+            Refuctoring = the tendency of some programmers to make code do the same, but worse.<br>
+            See <a href="http://en.wikipedia.org/wiki/Dunning%E2%80%93Kruger_effect">Dunning-Kruger effect</a>.
+          </aside>
+        </section>
+
+        <section data-background="#004000">
+          <h3>The natural order of things is disorder</h3>
+          <aside class="notes">
+            These are natural anti-patterns, which if left unchecked ruin it for everyone.
+          </aside>
+        </section>
+
+        <section data-background="images/potterybarn.jpg">
+          <h3 class="opaque fragment" style="display:inline; padding: 0.5em 1em;">You break it, you bought it</h3>
+          <aside class="notes">
+            <p>Your first solution might be the pottery barn rule: you break it, you bought it.
+            Everyone who messes up has to clean up their mess.</p>
+            <p>This isn't enough because it assumes responsible behavior from the irresponsible.
+            You're not their parent, you're their colleague.</p>
+            <a href="http://commons.wikimedia.org/wiki/File:Pottery_Barn_Briarwood.JPG">Image: wikipedia</a>
+          </aside>
+        </section>
+
+        <section data-background="#480000">
+          <h3>Competency paradox</h3>
+          <aside class="notes">
+            The most competent programmers work on the worst code.
+            Because at the end of the day you've got to ship,
+            and debugging is twice as hard as writing it in the first place.
+            These sorts of situations tend to elicit childish behavior.
+          </aside>
+        </section>
+
+        <section data-background="images/nand-boterham.jpg" data-background-color="#480000">
+          <aside class="notes">
+            If you can't beat them, join them. Be the one who makes the mess.
+          </aside>
+        </section>
+
+        <section data-background="images/nand-grot.jpg" data-background-color="#480000">
+          <aside class="notes">
+            Hide in your cave, and care for your precious private bits of code.
+          </aside>
+        </section>
+
+        <section data-background="images/nand-auto.jpg" data-background-color="#480000">
+          <aside class="notes">
+            Only do fun things, that don't actually move the product anywhere.
+          </aside>
+        </section>
+
+        <section>
+          <img src="images/waldorfandstatler.jpg">
+          <aside class="notes">
+            People who don't act like children will go the other direction and become curmudgeons,
+            because they've seen these anti-patterns one too many times.
+            <a href="https://www.youtube.com/watch?v=Z693R4dxD_A">Image: youtube</a>
+          </aside>
+        </section>
+    
+        <section data-background="images/nand-verrekijker.jpg" data-background-color="#004000">
+          <p class="opaque fragment" style="position: relative; top: -200px; display: inline; padding: 0.5em 1em;">&lt;? php</p>
+          <aside class="notes">
+            Eventually you have to leave behind childish things, act as a team,
+            look beyond the now and set a course towards the future.
+            Most of all you want a second chance at getting it right the first time, 
+            ours was our web product line.
+          </aside>
+        </section>
+
+        <section>
+          <h2>2003</h2>
+        </section>
+
+        <section>
+          <img src="images/iraqinvasion.jpg">
+          <aside class="notes">
+            <a href="http://commons.wikimedia.org/wiki/File:US_Navy_030402-N-5362A-004_U.S._Army_Sgt._Mark_Phiffer_stands_guard_duty_near_a_burning_oil_well_in_the_Rumaylah_Oil_Fields_in_Southern_Iraq.jpg">Image: wikipedia</a>
+          </aside>
+        </section>
+
+        <section>
+          <img src="images/concorde.jpg">
+          <aside class="notes">
+            <a href="http://commons.wikimedia.org/wiki/File:British_Airways_Concorde_G-BOAC_03.jpg">Image: wikipedia</a>
+          </aside>
+        </section>
+
+        <section>
+          <img src="images/php5beta.png">
+          <aside class="notes">
+            <a href="https://web.archive.org/web/20030726161750/http://www.php.net/">Source: archive.org</a>
+          </aside>
+        </section>
+
+        <section>
+          <h3>PHP today</h3>
+
+          <div class="tags">
+            <span>Laravel</span>
+            <span>Symfony</span>
+            <span>Zend</span>
+            <span>Silex</span> 
+            <span>Phalcon</span>
+            <span>Cake</span>
+            <span>Yii</span>
+            <span>Codeigniter</span>
+            <span>Composer</span>
+            <span>Doctrine</span>
+            <span>Wordpress</span>
+            <span>Drupal</span>
+          </div>
+        </section>
+
+        <section>
+          <h3>PHP in 2003</h3>
+
+          <div class="tags">
+            <span>PEAR</span>
+            <span>Wordpress</span>
+            <span>Drupal</span>
+          </div>
+        </section>
+
+        <section>
+          <p>MCS starts WebPortal project</p>
+          <img src="images/earlywebspace.png" style="width: 150%; height: 150%; border: none;">
+        </section>
+
+        <section data-background="#480000">
+          <h2>Choose a platform</h2>
+          <aside class="notes">
+            We did early experiments with Delphi, but they didn't pan out.
+            PHP was selected because it was built for the web and easy to use.
+          </aside>
+        </section>
+
+        <section data-background="images/goodbadandugly.jpg" data-background-size="contain">
+
+          <table style="border: 0; margin-top: 1em;">
+            <tbody class="opaque fragment">
+            <tr><td>Chose PHP</td></tr>
+            <tr><td>Did a POC</td></tr>
+            </tbody>
+            <tr style="height: 110px;"><td></td></tr>
+            <tbody class="opaque fragment">
+            <tr><td>Chose PHP</td></tr>
+            <tr><td>Designed in Russia</td></tr>
+            </tbody>
+            <tr style="height: 110px;"><td></td></tr>
+            <tbody class="opaque fragment">
+            <tr><td>Chose PHP</td></tr>
+            <tr><td>Made in Romania</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-background="#480000">
+          <h2><span class="fragment">Don't</span> choose an architecture<span style="visibility: hidden;">__</span></h2>
+        </section>
+
+        <section>
+          <table>
+            <tr><th>Instead of...</th><th>We used...</th></tr>
+            <tr><td>ajax</td><td><span class="fragment">iframes</span></td></tr>
+            <tr><td>models</td><td><span class="fragment">ociexecute()</span></td></tr>
+            <tr><td>views</td><td><span class="fragment">EasyTemplate</span></td></tr>
+            <tr><td>controllers</td><td><span class="fragment">procedures</span></td></tr>
+            <tr><td>libraries</td><td><span class="fragment">utilities.php</span></td></tr>
+          </table>
+        </section>
+
+        <section data-background-color="#004000" data-background="images/groundhog.jpg" data-background-size="contain">
+          <h3 class="opaque-inline">Every wrong choice will be repeated</h3>
+          <aside class="notes">
+            You see the same anti-patterns repeat, because it's easy to go down the same bad paths,
+            and lessons are hard-won yet easily lost.
+            Organizations don't learn, only people do, and they mostly only learn through mistakes.
+            Some people need to make the same mistake multiple times before they learn, and some never learn.
+            An organization only learns a lesson when everybody who is involved in the decision-making has learned that lesson.
+          </aside>
+        </section>
+
+        <section data-background="images/startrail.jpg">
+          <aside class="notes">
+            And so we start programming...
+            and after a while we realized that we started off wrong, again.
+            <a href="http://commons.wikimedia.org/wiki/File:Star_trails_over_the_ESO_3.6-metre_telescope.jpg">Image: wikipedia</a>
+          </aside>
+        </section>
+
+        <section>
+          <img src="images/wrongway.jpg">
+        </section>
+
+        <section data-background="images/nand-verrekijker.jpg" data-background-color="#004000">
+          <p class="opaque fragment" style="position: relative; top: -200px; display: inline; padding: 0.5em 1em;">An ounce of prevention is worth a pound of cure.</p>
+          <aside class="notes">
+            The key lesson when you aim to do better.
+          </aside>
+        </section>
+
+        <section data-background-color="#480000">
+          <h3>The problem with messes</h3>
+          <img src="images/chart.png">
+          <aside class="notes">
+            QA in its widest definition: all quality control processes (automated and manual testing, code review, linting, ...).
+            The problem with testing and code review is that they catch problems too late.
+            If you have a flaw in your understanding of the requirements, and you don't catch it until QA, it will cost a lot to fix.
+            Miss any such issue in QA, and the cost explodes because shipping a fix is a lot more work than fixing before shipping.
+            Basically, cutting corners on quality always ends up costing you more, not less.
+          </aside>
+        </section>
+
+        <section data-background="images/nyskyline.jpg">
+          <p class="opaque fragment">hiring professionals</p>
+          <p class="opaque fragment">specifications | prototyping | hallway user testing</p>
+          <p class="opaque fragment">whiteboarding | blueprints | design reviews</p>
+          <p class="opaque fragment">style guide | code reviews | linting</p>
+          <p class="opaque fragment">automated testing | continuous integration</p>
+          <aside class="notes">
+            Hiring professionals means hiring for a professional attitude, not years of experience.
+            After all, you can have 1 year of experience 20 times.
+          </aside>
+        </section>
+
+        <section data-background-color="#004000">
+          <h3>Choose an architecture, or you will have a poor one</h3>
+          <aside class="notes">
+            Corrolary: choose a framework, or you will build a poor one.
+          </aside>
+        </section>
+
+        <section>
+          <h3>The Cathedral and the Bazaar</h3>
+
+          <table><tr>
+            <td style="position: relative;">
+              <div class="opaque" style="position: absolute; bottom: 1.5em; left: 0.6em; padding-left: 0.3em; padding-right: 0.3em;">Choose</div>
+              <img src="images/cathedral.jpg" style="height: 450px;">
+            </td>
+            <td style="position: relative;">
+              <div class="opaque" style="position: absolute; bottom: 1.5em; left: 0.6em; padding-left: 0.3em; padding-right: 0.3em;">Compose</div>
+              <div class="fragment" style="position: absolute; top: 0.6em; width: 89%; height: 88%; border: 5px solid red;">&nbsp;</div>
+              <img src="images/bazaar.jpg" style="height: 450px;">
+            </td>
+          </tr></table>
+
+          <aside class="notes">
+            There are two architectural styles which work at scale.<br>
+            The cathedral design must be chosen at the start of the project,
+            typically by building the whole thing on a framework (zend, symfony, ...),
+            and developing everything in an idiomatic way.<br>
+            It produces a coherent and easy to understand codebase, but the architecture is locked into the framework,
+            making it more difficult to evolve to meet new trends or requirements.
+            Upgrading such a codebase's architecture cannot typically be done piece by piece.<br>
+            The bazaar design is a composed architecture built from separate libraries.
+            The result is usually less coherent, but it allows for easier gradual evolution of
+            different pieces to new library versions or architectures.<br>
+            Long-lived codebases tend to become bazaars due to the need to migrate to new practices or requirements.<br>
+            <a href="http://commons.wikimedia.org/wiki/File:Front_face_of_the_Antwerp_cathedral.jpg">Cathedral Image: wikipedia</a><br>
+            <a href="https://flic.kr/p/aj1KHs">Bazaar Image: flickr</a>
+          </aside>
+        </section>
+
+        <section>
+          <h3>Minimal Long-lived architecture</h3>
+          <br>
+          <ul class="fragment">
+            <li>Public interface
+              <ul>
+                <li>Web view</li>
+                <li>Mobile view</li>
+                <li>Services</li>
+              </ul>
+            </li>
+            <li>Private interface
+              <ul>
+                <li>Internal API</li>
+                <li>Libraries</li>
+              </ul>
+            </li>
+            <li>Persistence interface</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>2008: towards a new design</h3>
+          <br>
+          <ul class="fragment">
+            <li>JavaScript web front-end</li>
+            <li>Mobile web front-end</li>
+            <li>Web services layer</li>
+            <li>Internal API (lib.*.php)</li>
+            <li>3rd party libraries</li>
+          </ul>
+        </section>
+
+        <section data-background="images/migration.jpg">
+          <h3 class="opaque-inline">Migration</h3><br>
+          <p class="fragment opaque-inline">Refactor or rewrite?</p>
+          <aside class="notes">
+            Long-lived codebases always come to a point where they must migrate to new platforms or architectures.<br>
+            <a href="http://commons.wikimedia.org/wiki/File:Connochaetes_taurinus_-Wildebeest_crossing_river_-East_Africa.jpg">Image: wikipedia</a>
+          </aside>
+        </section>
+
+        <section data-background="images/lamborghini.jpg">
+          <h3 class="opaque-inline">Rewrite plan</h3>
+          <aside class="notes">
+            Before we start a rewrite, the promise is always the same:
+            it will be over quickly, deliver a much better product, with a smaller more elegant codebase,
+            that will adapt the new requirements much easier.<br>
+            <a href="http://commons.wikimedia.org/wiki/File:Lamborghini_Super_Trofeo_99_2010_amk.JPG">Image: wikipedia</a>
+          </aside>
+        </section>
+
+        <section data-background="images/kia.jpg" data-background-size="contain">
+          <h3 class="opaque-inline">Rewrite reality</h3>
+          <aside class="notes">
+            The reality of rewrites is almost always that they take many times longer than you thought,
+            produce a product that has its own flaws and downsides, leading to grumpy customers,
+            and with a codebase that has needed to adapt the real world requirements, which means that it will have its own ugliness.<br>
+            <a href="http://commons.wikimedia.org/wiki/File:2005_Kia_Sedona_EX_(US).jpg">Image: wikipedia</a>
+          </aside>
+        </section>
+
+        <section>
+          <img src="images/linesofcode.png" style="height: 200%;">
+          <aside class="notes">
+            Studies have found that 500 lines of debugged code added per developer-month is normal wrt. productivity.
+            A rewrite project of a 100.000 line codebase therefore requires 200 developer-months to complete.
+            Rewrites rarely make financial sense. Either you hire a big new team to do the rewrite,
+            or you choose to let the old product stand still (losing sales) during the (long) rewrite.<br>
+            <a href="http://skeptics.stackexchange.com/questions/17224/do-professional-software-developers-write-an-average-of-10-lines-of-code-per-day">Source: stackexchange</a>
+          </aside>
+        </section>
+
+        <section>
+          <h3>Refactoring advice</h3>
+          <br>
+          <ol style="position: relative; left: 1em;">
+            <li class="fragment">Understand why</li>
+            <li class="fragment">Document user requirements</li>
+            <li class="fragment">Work in small increments</li>
+            <li class="fragment">Involve the whole team</li>
+          </ol>
+          <aside class="notes">
+            You don't start a refactoring without knowing where you're going.
+            You don't rebuild a feature's UI without tracking existing user requirements for that feature.
+            You don't try to bite off too much at one time. We migrated to the new UI outside-in, screen per screen, feature per feature.
+            A few people have to lay the groundwork (build/integrate core technology, write guidelines, teach guidelines),
+            but the actual migration goes smoothest if everyone migrates existing features as they work to extend them.
+            Assigning a dedicated team on refactoring and letting everyone else keep going in the old way slows you down too much.
+          </aside>
+        </section>
+
+        <section data-background="images/startrail.jpg">
+          <aside class="notes">
+            And so we start programming...
+            <a href="http://commons.wikimedia.org/wiki/File:Star_trails_over_the_ESO_3.6-metre_telescope.jpg">Image: wikipedia</a>
+          </aside>
+        </section>
+
+        <section>
+          <h2>2015</h2>
+           
+          <ul>
+            <li>1.000.000</li>
+            <li>1.400.000</li> 
+            <li>700.000</li>
+            <li>150.000</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Still interesting</h3>
+          <br>
+          <ul>
+            <li>Migrations
+            <ul>
+              <li>UWS</li>
+              <li>PSR</li>
+              <li>Tablet-friendly</li>
+            </ul>
+            </li>
+            <li>Projects
+            <ul>
+              <li>Energy</li>
+              <li>Big Data</li>
+              <li>Mobile CAD</li>
+            </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Interested?</h3>
+        </section>
+
+        <section>
+          <p style="color: #999;">the code is deprecated</p>
+          <h2>Long live the codebase</h2>
+          <br>
+          <p>
+            Thank you!<br><br>
+            <a href="http://sebrechts.net/blog">sebrechts.net/blog</a>
+          </p>
+        </section>
+      </div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

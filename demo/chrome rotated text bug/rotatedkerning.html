@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Rotated text demo</title>
+	<style type="text/css">
+	  .text-container { 
+       font-weight: bold;
+	    /* SVG text node */
+	    fill: red; 
+	    /* IE div */
+	    color: red;
+	  }
+	</style>
+</head>
+<body style="margin: 8px;">
+  <div id="container" style="font-family: Tahoma; font-size: 12px; margin-top: 1em;">
+    Rotated text example
+    <script type="text/javascript">
+      var container = document.getElementById('container');
+      var SVGNS = 'http://www.w3.org/2000/svg';
+      var svg = document.createElementNS(SVGNS, 'svg');
+      container.appendChild(svg);
+      function addBlock(rotate) {
+         var textBlock = document.createElementNS(SVGNS, 'text');
+         if (!rotate) {
+            textBlock.setAttribute('x', 30);
+            textBlock.setAttribute('y', 20);
+         };
+         if (rotate) textBlock.setAttribute('transform', 'rotate(90)');
+         textBlock.setAttribute('class', 'text-container');
+         svg.appendChild(textBlock);
+         var text = document.createTextNode('Navigation');
+         textBlock.appendChild(text);
+      };
+      addBlock(true);
+      addBlock(false);
+    </script>
+  </div>
+</body>
+</html>

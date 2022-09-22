@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Strange Strings</title>
+
+		<meta name="description" content="Strange Strings, a presentation about unicode and PHP">
+		<meta name="author" content="Joeri Sebrechts">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+        <!-- Ubuntu Mono font susceptible to homograph attack -->
+        <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+    <style type="text/css">
+      .reveal table.th-header-col th {
+        text-align: right;
+        background-color: #666;
+        padding-left: 8px;
+      }
+
+      .reveal pre code {
+        font-family: 'Ubuntu Mono', monospace;
+        font-size: 145%;
+        line-height: 1.25em;
+        letter-spacing: 1px;
+      }
+
+      .reveal pre code.small {
+        font-size: 125%;
+        font-weight: bold;
+        line-height: 1.15em;
+      }
+
+      .reveal pre code .comment {
+        color: #a0c8a0;
+      }
+
+      .reveal pre code .string {
+        color: #edabab;
+      }
+
+    </style>
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section>
+					<h1>Strange Strings</h1>
+				</section>
+
+        <section style="padding-top: 0; padding-bottom: 0;">
+          <img src="images/molen.jpg" height="660">
+          <div style="position: absolute; top: 18px; height: 660px; width: 422px; right: 54px; background: #000; opacity: 0.5;"></div>
+          <div style="position: absolute; top: 18px; height: 660px; width: 422px; right: 54px; color: white; padding-top: 20%;">
+            <h3>Joeri Sebrechts</h3>
+            <br>
+            js@mcs.fm<br>
+            10<br>
+            1 million<br>
+            1
+          </div>
+        </section>
+
+        <section>
+          <h3>Everybody knows this</h3>
+          <pre><code>
+          $str = "abcxyz";
+          $char = $str[1];
+
+          echo $char;               // --> b
+          echo strpos($str, "xyz"); // --> 3
+          echo strlen($str);        // --> 6
+          echo substr($str, 3, 3);  // --> xyz
+          </code></pre>
+          <aside class="notes">
+            Strings are arrays of characters.
+          </aside>
+        </section>
+
+        <section>
+          <h3>Actually...</h3>
+          <pre><code>
+          $str = "аbcxyz";
+          $char = $str[1];
+
+          echo $char;               // --> �
+          echo strpos($str, "xyz"); // --> 4
+          echo strlen($str);        // --> 7
+          echo substr($str, 3, 3);  // --> cxy
+          </code></pre>
+          <aside class="notes">
+            Strings are not arrays of characters.
+            Strings are arrays of numbers.
+            Strings in PHP are arrays of bytes.
+            The a is cyrillic (2 bytes in UTF-8).
+          </aside>
+        </section>
+
+        <section>
+          <h2>I � Unicode</h2>
+        </section>
+
+        <section>
+          <h3>ASCII</h3>
+
+          <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+            <tr><th>From</th><td>1963</td><td rowspan="6" style="vertical-align: middle; padding-left: 1em;"><img width="379" height="475" src="images/acoustic-coupler.jpg" /></td></tr>
+            <tr><th>By</th><td>ASA (now ANSI)</td></tr>
+            <tr><th>Purpose</th><td>Teletype</td></tr>
+            <tr><th>Range</th><td>7-bit</td></tr>
+            <tr><th>Encodes</th><td>Source code<br>Parts of English</td></tr>
+            <tr><th>Hello</th><td>72 101 108 108 111<br>48 65 6c 6c 6f (00)</td></tr>
+          </table>
+
+          <aside class="notes">
+            ASA = American Standards Association.
+            ANSI = American National Standards Institute.
+            <a href="http://www.bobbemer.com/ASCII.HTM">Bob Bemer (IBM) was the father of ASCII.</a>
+            IBM had 9 character sets in use before this.
+            However, IBM failed to switch to ASCII until 1981, with the introduction of the PC.
+            See history of character sets: http://tronweb.super-nova.co.jp/characcodehist.html
+            <strong>The nul character</strong> at the end marks the end of the string on most systems.
+          </aside>
+        </section>
+        <section>
+          <h3>ANSI / latin1 / ISO 8859</h3>
+          <table style="margin: 1em auto; font-size: 85%;" cellspacing="8" class="th-header-col">
+            <tr><th>From</th><td>1985</td><td rowspan="6" style="vertical-align: middle; padding-left: 0.5em;"><img src="images/Windows1.0.png"></td></tr>
+            <tr><th>By</th><td>ISO (ISO 8859-x)<br>Microsoft (ANSI)</td></tr>
+            <tr><th>Purpose</th><td>Standardizing the 8th bit</td></tr>
+            <tr><th>Range</th><td>~ 8-bit</td></tr>
+            <tr><th>Encodes</th><td style="white-space: nowrap;">
+              West-European languages (latin1)<br>
+              latin1 + € + word quotes (CP1252)<br>
+              Turkish (latin3), Greek (latin7), ...
+            </td></tr>
+            <tr><th>Gotcha</th><td>Active code page? S-JIS?</td></tr>
+          </table>
+
+          <aside class="notes">
+            A code page ascribes a meaning to the values that use the 8th bit.
+            You have to know the code page to know which language you're dealing with.
+            <a href="http://blogs.msdn.com/b/oldnewthing/archive/2004/05/31/144893.aspx">Why is it called ANSI?</a>
+          </aside>
+        </section>
+<!--        <section>
+          <h3>Mojibake</h3>
+          <img src="images/mojibake.png">
+        </section>-->
+        <section>
+          <h3>Unicode / UCS-2</h3>
+          <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+            <tr><th>From</th><td>1991</td><td rowspan="7" style="vertical-align: middle;"><img src="images/nt31logo.gif"></td></tr>
+            <tr><th>By</th><td>Unicode Consortium<br><small style="font-size: 80%;">(Xerox, Apple, IBM, Microsoft, ...)</small></td></tr>
+            <tr><th>Purpose</th><td style="white-space: nowrap;">Simple encoding for all languages</td></tr>
+            <tr><th>Range</th><td>2 bytes per char (64k)</td></tr>
+            <tr><th>Encodes</th><td>Mainstream languages</td></tr>
+            <tr><th>Hello</th><td style="font-size: 80%;">00 48 00 65 00 6c 00 6c 00 6f (00 00)</td></tr>
+            <tr><th>Gotcha</th><td>
+              c4 8d (č) == 00 63 cc 8c (c + ◌̌ )<br>
+              Not ASCII-compatible (nul)<br>64k</td></tr>
+          </table>
+          <aside class="notes">
+            The null bytes mean that existing string handling code sees a zero-length string,
+            so all string handling code had to be rewritten and have two paths, one for legacy text and one for "wide" text.
+            Still, many systems chose to rewrite it all and adopt this solution: Windows NT, Java, JavaScript and NextStep / OS X, but not unix / linux (or PHP).
+            A "big rewrite" to UTF-16 was tried for PHP in PHP 6, but it ran out of steam.
+          </aside>
+        </section>
+        <section>
+          <img src="images/davidcutler.jpg" height="600">
+          <aside class="notes">
+            Dave Cutler was the lead developer behind Windows NT.
+            He was someone who was very exacting. His coworkers mailed each other this fake news story about him:
+            <p>
+              Washington, D.C.<br>
+              A four-foot tsunami, or tidal wave, devastated much of the west coast today.
+              The federal emergency management agency called it the worst U.S. disaster ever,
+              estimating damages at $500 billion.
+              Rescue workers found the first survivor of the tsunami in the ruins of Microsoft's corporate campus.
+              David N. Cutler was found clinging to a water fountain.
+              He reported having a pissing match with another Microsoft employee right before the tsunami.
+              Cutler's only injury appeared to be mild dehydration.
+            </p>
+            He would have never settled for the codepages mess, only something consistent like Unicode would suffice.
+            If you're interested in the history of how Windows NT was developed, the book "Showstopper" describes the death march project led by Dave Cutler.
+            Dave Cutler is still at Microsoft and worked on the Hyper-V host OS that is in the Xbox One.
+          </aside>
+        </section>
+        <section>
+          <h3>Unicode / UTF-16</h3>
+          <table style="margin: 0.5em auto;" cellspacing="8" class="th-header-col">
+            <tr><th>From</th><td>1996</td><td rowspan="7" style="vertical-align: middle; padding-left: 0.5em;"><img src="images/Windows2000.jpg"></td></tr>
+            <tr><th>Range</th><td>2 or 4 bytes per char<br>1.1 million code points</td></tr>
+            <tr><th>Purpose</th><td style="font-size: 90%;">Actually encode all languages</td></tr>
+            <tr><th>Hello</th><td style="font-size: 80%; white-space:nowrap;">
+              BE: 00 48 00 65 00 6c 00 6c 00 6f (00 00)<br>
+              LE: 48 00 65 00 6c 00 6c 00 6f 00 (00 00)</td></tr>
+            <tr><th>Gotcha</th><td>ASCII-compatibility,<br>null bytes, variable-width,<br>endianness, BOM</td></tr>
+          </table>
+        </section>
+        <section>
+          <h3>Unicode / UTF-16</h3>
+          <p style="margin: 1em;">BMP / UCS-2</p>
+          <table style="background-color: #666; margin: 0 auto; font-size: 100%;">
+            <tr><th>From</th><th>To</th><th>Byte 1</th><th>Byte 2</th></tr>
+            <tr><td>U+0000<br>U+E000</td><td>U+D7FF<br>U+FFFF</td><td>xxxxxxxx</td><td>xxxxxxxx</td></tr>
+          </table>
+          <p style="margin: 1em;">Supplementary</p>
+          <table style="background-color: #666; margin: 0 auto; font-size: 100%;">
+            <tr><th>From</th><th>To</th><th>Byte 1</th><th>Byte 2</th><th>Byte 3</th><th>Byte 4</th></tr>
+            <tr><td>U+10000</td><td>U+10FFFF</td><td>11011xxx</td><td>xxxxxxxx</td><td>110111xx</td><td>xxxxxxxx</td></tr>
+          </table>
+
+          <aside class="notes">
+            Whether a sequence is half of a 4 byte pair can be detected by checking if the first bits are 11011.
+            UTF-16 is not self-synchronizing.
+            Since UTF-16 is a strict superset of UCS-2, they declared that all UCS-2 compatible systems are really UTF-16 compatible systems.
+          </aside>
+
+        </section>
+
+        <section>
+          <h3>Unicode / UTF-8</h3>
+          <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+            <tr><th>From</th><td>1992</td><td rowspan="6" style="vertical-align: middle; padding-left: 0.5em;"><img height="250" src="images/plan9.jpg"></td></tr>
+            <tr><th>By</th><td>Ken Thompson, Rob Pike</td></tr>
+            <tr><th>Range</th><td>1 to 4 bytes per char</td></tr>
+            <tr><th>Encodes</th><td>All that is written</td></tr>
+            <tr><th>Hello</th><td>48 65 6c 6c 6f (00)</td></tr>
+            <tr><th>Gotcha</th><td>Variable-width, BOM</td></tr>
+          </table>
+        </section>
+        <section>
+          <h3>Unicode / UTF-8</h3>
+          <table style="background-color: #666; margin: 1em auto; font-size: 95%;">
+            <tr><th>Range</th><th>From</th><th>To</th><th>Byte 1</th><th>Byte 2</th><th>Byte 3</th><th>Byte 4</th></tr>
+            <tr><td>ASCII</td><td>U+0000</td><td>U+007F</td><td>0xxxxxxx</td></tr>
+            <tr><td>Latin</td><td>U+0080</td><td>U+07FF</td><td>110xxxxx</td><td>10xxxxxx</td></tr>
+            <tr><td>BMP</td><td>U+0800</td><td>U+FFFF</td><td>1110xxxx</td><td>10xxxxxx</td><td>10xxxxxx</td></tr>
+            <tr><td>Suppl.</td><td>U+10000</td><td>U+10FFFF</td><td>11110xxx</td><td>10xxxxxx</td><td>10xxxxxx</td><td>10xxxxxx</td></tr>
+          </table>
+
+          <aside class="notes">
+            <a href="http://www.cl.cam.ac.uk/~mgk25/ucs/utf-8-history.txt">Story behind UTF-8.</a> The bunny is Plan 9's mascotte and called Glenda.
+            UTF-8 is backwards compatible with ASCII, meaning far less code had to be rewritten.
+            It is also more efficient for western languages. It became the standard for unix / linux, e-mail and the web.
+            UTF-8 is self-synchronizing.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Unicode in PHP</h2>
+          <h3>Like Champagne in a paper cup</h3>
+        </section>
+
+        <section>
+          <h3>PHP is a byte processing engine</h3>
+
+          <table style="margin: 1em auto;">
+          <tr>
+            <td style="vertical-align: middle; text-align: center;">
+              <img src="images/zool.jpg" style="margin-bottom: 0;"><br>
+              <span style="font-size: 80%;">"There is no text, only bytes"</span>
+            </td>
+            <td style="vertical-align: middle;">
+              <pre style="width: 400px;"><code>
+  // what you see
+  function hellö() { }
+
+  // what PHP sees
+  function hell��() { }
+              </code></pre>
+            </td>
+          </tr>
+          </table>
+          <p>Byte values 0x7F-0xFF are allowed in identifiers.</p>
+          <aside class="notes">
+            UTF-8 .php files are ok, but don't use a BOM.
+            A BOM will cause headers to be sent.<br>
+            Byte parsing means you can use PHP in binary files (e.g. png).<br>
+            PHP 5.4 allows you to throw the parser into UTF-16 mode by setting:<br>
+            zend.multibyte=1<br>
+            zend.script_encoding=UTF-16<br>
+            But you shouldn't do this unless you know you need to.
+          </aside>
+        </section>
+
+        <section>
+          <h3>string functions are byte functions</h3>
+          <pre><code>
+      $char = $str[1];          // = second byte
+
+      echo strpos($str, "xyz"); // = position in bytes
+
+      echo strlen($str);        // = length in bytes
+
+      echo substr($str, 3, 3);  // = bytes 4 to 6
+          </code></pre>
+          <img height="91" src="images/binarysafe.png">
+          <aside class="notes">
+            strlen ignores nul bytes.
+          </aside>
+        </section>
+
+        <section>
+          <h3>Processing UTF-8</h3>
+          <pre><code style="line-height: 1.2em; padding-top: 0.5em; padding-bottom: 0.5em;">        // u + &#x0306;&nbsp; = &#x1FE0; = 3 bytes
+        $char = json_decode("\"u\\u0306\"");
+        $str = "abc".$char;
+
+        $pos = strpos($str, $char);             // = 3
+        echo substr($str, $pos, strlen($char)); // = &#x1FE0;
+        echo strtoupper($char);                 // = &#x1FE0;
+        // but:
+        echo strlen($char);                     // = 3
+        echo strtoupper("&eacute;");                   // = &eacute;</code></pre>
+          <aside class="notes">
+            If you treat strings consistently as bytes it mostly works fine.
+            But you have to be careful to always treat the length as bytes,
+            including the definition of DB fields, length limits in external API's, ...
+            The str functions can only handle ASCII, so things like strtoupper break.
+          </aside>
+        </section>
+
+        <section>
+          <h3>Danger Will Robinson!</h3>
+
+          <table style="margin: 1em auto 0 auto;" cellspacing="8" class="th-header-col">
+            <tr><th>bin2hex</th><td>One hex pair per byte</td></tr>
+            <tr><th>chr</th><td>chr(256) == chr(0)</td></tr>
+            <tr><th>chunk_split</th><td>Can split characters</td></tr>
+            <tr><th>count_chars</th><td>Counts byte values, not chars</td></tr>
+            <tr><th><span style="color: #F99;">str_pad</span></th><td>Pads to length in bytes</td></tr>
+            <tr><th><span style="color: #F99;">strcmp</span></th><td>Compares bytes</td></tr>
+            <tr><th>stripos</th><td>Only ignores case for ASCII</td></tr>
+            <tr><th><span style="color: #F99;">strtoupper</span></th><td>Only handles ASCII</td></tr>
+            <tr><th>wordwrap</th><td>Line length is in bytes</td></tr>
+          </table>
+        </section>
+
+        <section>
+          <h3>UTF-8 compatible</h3>
+
+          <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+            <tr><th>base64_encode</th><td>Input is binary, output is ASCII</td></tr>
+            <tr><th>base64_decode</th><td>Input is ASCII, output is binary</td></tr>
+            <tr><th>json_encode</th><td>Expects UTF-8 input</td></tr>
+            <tr><th>json_decode</th><td>Expects UTF-8 input</td></tr>
+            <tr><th>html_entity_decode</th><td>Accepts UTF-8 param</td></tr>
+            <tr><th>htmlentities</th><td>Accepts UTF-8 param</td></tr>
+            <tr><th>htmlspecialchars_decode</th><td>Decodes entities to ascii</td></tr>
+            <tr><th>htmlspecialchars</th><td>Encodes only ascii characters</td></tr>
+          </table>
+
+          <p>But ... where's the rest?</p>
+        </section>
+
+        <section>
+          <h3>utf8_decode</h3>
+          <br>
+          <blockquote>
+            The easiest way to determine the character count of a UTF8 string is to pass the text through utf8_decode() first.
+          </blockquote>
+          <p><em style="font-size: 80%;">- php documentation comment on strlen()</em></p>
+          <br>
+          <div class="fragment">
+            <p style="color: #F99;">This is always the wrong thing to do.</p>
+            <p style="font-size: 70%;">And if not, use mb_convert_encoding()</p>
+          </div>
+          <aside class="notes">
+            This is because this function only encodes ISO-8859-1 text,
+            while in the real world never occurs (typically you see Windows-1252 instead).
+            mb_convert_encoding is preferable because it does not require an external library,
+            and because it handles broken input more elegantly (iconv cuts off text sometimes).
+          </aside>
+        </section>
+
+        <section>
+          <h3>The holy trinity</h3>
+          <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+            <tr><th>iconv</th><th>mbstring</th><th>intl</th></tr>
+            <tr><td></td><td></td><td></td></tr>
+          </table>
+        </section>
+
+        <section>
+          <h3>iconv</h3>
+          <pre><code>
+    $str = "аbcxyz";                   // cyrillic a
+
+    iconv_set_encoding("internal_encoding", "UTF-8");
+    echo iconv_strlen($str);           // --> 6
+    echo iconv_strpos($str, "xyz");    // --> 3
+    echo iconv_substr($str, 3, 3);     // --> xyz
+          </code></pre>
+          <div class="fragment">
+            <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+              <tr><th>From</th><td>PHP 4.0.5</td></tr>
+              <tr><th>Based on</th><td>libiconv</td></tr>
+              <tr><th>Charsets</th><td>platform-dependent</td></tr>
+              <tr><th>Functions</th><td>few</td></tr>
+              <tr><th>Units</th><td>Code points, not characters</td></tr>
+            </table>
+          </div>
+          <aside class="notes">
+            iconv is the standard unix library for character set conversion.
+            It came from HP-UX and was standardized in 1992 as part of the XPG4 standard.
+            XPG = X/Open Portability Guide
+          </aside>
+        </section>
+
+        <section>
+          <h3>mbstring</h3>
+          <pre><code>
+    $str = "аbcxyz";                   // cyrillic a
+
+    mb_internal_encoding("UTF-8");
+    echo mb_strlen($str);              // --> 6
+    echo mb_strpos($str, "xyz");       // --> 3
+    echo mb_substr($str, 3, 3);        // --> xyz
+          </code></pre>
+          <div class="fragment">
+            <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+              <tr><th>From</th><td>PHP 4.0.6</td></tr>
+              <tr><th>Based on</th><td>mbfilter (sgk)</td></tr>
+              <tr><th>Charsets</th><td>most</td></tr>
+              <tr><th>Functions</th><td>most, but not mb_strcmp</td></tr>
+              <tr><th>Units</th><td>Code points, not characters</td></tr>
+            </table>
+          </div>
+          <aside class="notes">
+            No mb_strcmp means no sorting.
+            mbstring.func_overload was convenient, but it's deprecated now.
+            sgk = Shigeru Kanemoto (HappySize Inc.)
+          </aside>
+        </section>
+
+        <section>
+          <h3>intl</h3>
+          <pre><code>
+    $str = "аbcxyz";                   // cyrillic a
+
+    echo grapheme_strlen($str);        // --> 6
+    echo grapheme_strpos($str, "xyz"); // --> 3
+    echo grapheme_substr($str, 3, 3);  // --> xyz
+          </code></pre>
+          <div class="fragment">
+            <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+              <tr><th>From</th><td>PHP 5.3.0</td></tr>
+              <tr><th>Based on</th><td>libicu</td></tr>
+              <tr><th>Charsets</th><td>UTF-8</td></tr>
+              <tr><th>Functions</th><td>many</td></tr>
+              <tr><th>Units</th><td>Graphemes, not characters</td></tr>
+            </table>
+          </div>
+          <aside class="notes">
+            ICU = International Components for Unicode.
+            Originally developed by IBM in the late 90's.
+            The standard library for doing advanced unicode arithmetic
+            (collation, transliteration, etc...)
+          </aside>
+        </section>
+        <section>
+          <h3>String length roulette</h3>
+          <pre><code>
+      $str = json_decode("\"u\\u0306\""); // u + &#x0306;&nbsp; = &#x1FE0;
+
+      echo strlen($str);          // 3 = bytes
+      echo mb_strlen($str);       // 2 = code points
+      echo iconv_strlen($str);    // 2 = code points
+      echo grapheme_strlen($str); // 1 = graphemes
+          </code></pre>
+          <pre><code>
+      var text = 'u\u0306';
+      console.log(text.length);   // 2 = code points
+          </code></pre>
+          <p>mysql, postgres, oracle: char_length() = 2</p>
+        </section>
+        <section>
+          <h3>WWFD?</h3>
+          <p></p>
+          <ul>
+            <li>Symfony 2: if / else structure, e.g. LengthValidator<br>
+              <pre style="width: 100%;"><code>  if (function_exists('grapheme_strlen') &&
+        'UTF-8' === $charset) {
+    $length = grapheme_strlen($stringValue);
+  } else if (function_exists('mb_strlen')) {
+    $length = mb_strlen($stringValue, $charset);
+  } else {
+    $length = strlen($stringValue);
+  }</code></pre>
+            </li>
+            <li>Zend Framework 2: StringUtils / <a href="https://github.com/zendframework/zf2/tree/221f1855b9759e80555915d14beeaa87770e1705/library/Zend/Stdlib/StringWrapper">StringWrapper</a></li>
+            <li>Laravel 4: Illuminate\Support\Str</li>
+            <li>Cake: Cake/Utility/String</li>
+          </ul>
+          <aside class="notes">
+            So, basically they don't know what to do with this mess either.
+            It's like PHP's API designers found themselves in a hole and tried to dig their way out.
+            Let's dig that hole a little deeper.
+          </aside>
+        </section>
+        <section>
+          <h2>Sorting</h2>
+          <h3>Fear this should you</h3>
+        </section>
+
+        <section>
+          <h3>Unicode Collation</h3>
+          <h4>The problem</h4>
+          <table style="margin: 1em auto;" cellspacing="8" class="th-header-col">
+            <tr><th rowspan="2">Language</th><td>Swedish:</td><td>z < ö</td></tr>
+            <tr><td>German:</td><td>ö < z</td></tr>
+            <tbody class="fragment">
+              <tr><th rowspan="2">Usage</th><td>German dictionary:</td><td>of < öf</td></tr>
+              <tr><td>German telephone:</td><td>öf < of</td></tr>
+            </tbody>
+            <tbody class="fragment">
+              <tr><th rowspan="2">Customizations</th><td>Upper-first:</td><td>A < a</td></tr>
+              <tr><td>Lower-first:</td><td>a < A</td></tr>
+            </tbody>
+          </table>
+        </section>
+        <section>
+          <h3>Unicode Collation</h3>
+          <h4>Unicode Collation Algorithm</h4>
+          <table style="width: 100%;"><tr><td style="text-align: center;"><img src="images/ucalevels.png"></td></tr></table>
+          <ol>
+            <li style="margin-bottom: 0.3em;">Normalization</li>
+            <li style="margin-bottom: 0.3em;">Collation element lookup</li>
+            <li>Sort key composition<br>
+              <small style="font-size: 85%;">(DUCET, CLDR, custom weighting)</small></li>
+            <li>Binary sort</li>
+          </ol>
+          <aside class="notes">
+            Collation = sorting for clever people.
+            DUCET = Default Unicode Collation Element Table.
+            CLDR = Common Locale Data Repository.
+          </aside>
+        </section>
+
+        <section>
+          <h3>The obvious</h3>
+          <pre><code>
+      $arr = array("resume", "résumé", "rope");
+      sort($arr);
+      echo implode($arr, ", ");
+      // --> ?
+          </code></pre>
+          <p class="fragment">
+            resume, rope, résumé
+          </p>
+          <aside class="notes">
+            sort() uses strcmp(). strcmp() calls C memcmp().
+            memcmp() does byte value comparison.
+            In other words, sort()'s default behavior is always wrong for text.
+          </aside>
+        </section>
+        <section>
+          <h3>To the google-mobile</h3>
+          <img src="images/natsortsearch.png" />
+          <br>
+          <pre><code>
+      $arr = array("resume", "résumé", "rope");
+      natsort($arr);
+      echo implode($arr, ", ");
+          </code></pre>
+          <p class="fragment">
+            resume, rope, résumé
+          </p>
+          <aside class="notes">
+            natsort() sorts byte-based, except for embedded numbers.
+          </aside>
+        </section>
+        <section>
+          <h3>RTFM</h3>
+          <pre><code style="text-align: center;">bool sort ( array &$array [, int $sort_flags <br>= SORT_REGULAR ] )</code></pre>
+          <blockquote style="font-size: 80%;">SORT_LOCALE_STRING - compare items as strings, based on the current locale. It uses the locale, which can be changed using setlocale()</blockquote>
+          <pre><code>
+        $arr = array("resume", "résumé", "rope");
+        sort($arr, SORT_LOCALE_STRING);
+        echo implode($arr, ", ");
+          </code></pre>
+          <div class="fragment">
+            <p>
+              resume, rope, résumé
+            </p>
+          </div>
+        </section>
+        <section>
+          <h3>About locale</h3>
+          <ul>
+            <li>Default: "C"
+              <ul>
+                <li>Byte-based collation</li>
+              </ul>
+            </li>
+            <li>Syntax: "en_US.UTF8"
+              <ul>
+                <li>Language and region determine collation order</li>
+                <li>Encoding needed to recognize code points</li>
+              </ul>
+            </li>
+          </ul><br>
+          <br>
+          <div class="fragment">
+            <pre><code>
+      $arr = array("résumé", "rope", "resume");
+      setlocale(LC_COLLATE, "en_US.UTF8");
+      sort($arr, SORT_LOCALE_STRING);
+      echo implode($arr, ", ");
+            </code></pre>
+            <p class="fragment">resume, résumé, rope</p>
+          </div>
+          <aside class="notes">
+            Uses underlying system libraries, sorts using CLDR, except...
+          </aside>
+        </section>
+        <section>
+          <h3>The curse that keeps us cursing</h3>
+          <p>From the <a href="http://msdn.microsoft.com/en-us/library/x99tb11d%28v=vs.80%29.aspx">MSDN page</a> for setlocale</p>
+          <blockquote>The set of available languages, country/region codes, and code pages includes all those supported by the Win32 NLS API <strong>except code pages that require more than two bytes per character, such as UTF-7 and UTF-8</strong>.</blockquote>
+        </section>
+        <section>
+          <h3>No more detours</h3>
+          <pre><code>
+          $arr = array("résumé", "rope", "resume");
+          $col = new Collator(""); // "" = DUCET
+          $col->sort($arr);
+          echo implode($arr, ", ");
+          </code></pre>
+          <p>resume, résumé, rope</p>
+          <br>
+          <div class="fragment">
+            <ul>
+              <li>PHP 5.3+</li>
+              <li>'intl' extension</li>
+              <li>Collator::compare()</li>
+            </ul>
+          </div>
+          <aside class="notes">
+            Parameter: null = env default, "" = DUCET rules, "en_US" = locale.
+            This uses libicu internally.
+          </aside>
+        </section>
+        <section>
+          <h2>ORDER BY</h2>
+          <h3>I never liked sort() anyway</h3>
+        </section>
+        <section>
+          <h3>mysql to the rescue</h3>
+          <pre><code class="small">  create database test character set utf8;<br>  create table words (word varchar(20));</code></pre>
+          <pre><code class="small">  $db = new PDO(
+    "mysql:host=localhost;dbname=strings;charset=utf8");
+  // for mysqli: mysqli_set_charset("utf8");
+  $db->exec("insert into words " .
+    "values ('rope'),('résumé'),('resume')");
+
+  $stmt = $db->query("select * from words order by word");
+  $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+  echo implode($rows, ", ");</code></pre>
+          <p class="fragment">résumé, resume, rope</p>
+          <aside class="notes">
+            The mysql unicode collations treat too many characters as equivalent,
+            including e and é. So the results are sorted by disk order, not DUCET order.
+          </aside>
+        </section>
+<!--        <section>
+          <h3>???</h3>
+          <ul style="margin: 0.5em 0;">
+            <li>charset utf8 defaults to utf8_general_ci collation</li>
+            <li>utf8_general_ci = mysql proprietary</li>
+            <li>utf8_bin = compare by code point, not for sorting</li>
+            <li>utf8_unicode_ci = supposedly UCA, not really</li>
+          </ul>
+          <div class="fragment" style="text-align: center;">
+              <pre><code>
+  $stmt = $db->query(
+    "select * from words " .
+    "order by convert(word using latin1) " .
+    "collate latin1_general_ci");
+  $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+  echo implode($rows, ", ");
+              </code></pre>
+            <p>resume, résumé, rope</p>
+          </div>
+          <aside class="notes">
+            _cs variants experimental, not part of all builds.
+            The <a href="http://bugs.mysql.com/bug.php?id=19567">bug report</a> in mysql for UCA-compliant sorting
+            was made in 2006, is still not solved, and has been classified as a feature request.
+          </aside>
+        </section>-->
+
+        <section>
+          <img src="images/use-postgres.png" height="500">
+        </section>
+
+        <section>
+          <h3>JavaScript is no better</h3>
+          <pre><code>
+          ['resume', 'résumé', 'rope'].sort()
+          </code></pre>
+          <p class="fragment">resume, rope, résumé</p>
+          <pre class="fragment"><code>
+    ['resume', 'résumé', 'rope'].sort(function(a, b) {
+      return a.localeCompare(b);
+    });
+          </code></pre>
+          <p class="fragment">resume, résumé, rope</p>
+          <aside class="notes">
+            JavaScript sorts by code point value.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Browser output</h2>
+          <h3>Easy as 355 / 113</h3>
+        </section>
+
+        <section>
+          <h3>Avoid charset autodetection</h3>
+          <div class="fragment">
+            <p>3 methods:</p>
+          <pre><code>
+  &lt;head&gt;
+      &lt;meta http-equiv='Content-Type'
+            content='text/html; charset=UTF-8'&gt;
+          </code></pre>
+          </div>
+          <div class="fragment">
+            <pre><code class="no-highlight">
+  header(<span class="string">'Content-Type:text/html; charset=UTF-8'</span>);
+  <span class="comment">// 'UTF-8', not 'UTF8'!</span>
+            </code></pre>
+          </div>
+          <div class="fragment">
+            <pre><code class="no-highlight">
+  ini_set(<span class="string">'default_charset'</span>, <span class="string">'UTF-8'</span>);
+            </code></pre>
+          </div>
+        </section>
+<!--        <section>
+          <h3>Entity encoding</h3>
+          <p><a href="https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet" target="_blank">OWASP XSS prevention cheat sheet</a></p>
+          <div>
+            <img src="images/xsscheatsheettoc.png" style="height: 400px; margin: 0 auto;">
+          </div>
+          <p>PHP built-ins not sufficient, use <a href="http://code.google.com/p/owasp-esapi-php/">ESAPI</a></p>
+        </section>
+        <section>
+          <h3>Making do with PHP built-ins</h3>
+          <pre><code class="no-highlight small" style="padding-top: 0.5em; padding-bottom: 0.5em;">  &lt;html&gt;
+    &lt;head&gt;
+      &lt;style type="text/css"&gt;
+        <strong class="string" style="text-decoration: line-through;">avoid untrusted content</strong>
+      &lt;/style&gt;
+      &lt;script&gt; <strong class="string" style="text-decoration: line-through;">avoid untrusted content</strong> &lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+      &lt;button onclick=" <strong class="string" style="text-decoration: line-through;">avoid untrusted content</strong> "&gt;
+        <strong> use encodeForHTML() </strong>
+      &lt;/button&gt;
+    &lt;/body&gt;
+  &lt;/html&gt;</code></pre>
+          <div class="fragment">
+            <pre><code style="padding-top: 0.5em; padding-bottom: 0.5em;">  function encodeForHTML($str) {
+    return str_replace("/", "&amp;#x27;",
+      htmlentities($str, ENT_QUOTES, "UTF-8");
+  }</code></pre>
+          </div>
+          <aside class="notes">
+            / is included because it helps end an element.
+            You can use encodeForHTML in attributes, but you must remember the quotes.
+            ' becomes &apos;, which is not recommended, but not known to be unsafe.
+          </aside>
+        </section>
+        <section>
+          <h3>Data in scripts</h3>
+          <p>Bad:</p>
+          <pre><code style="line-height: 1.1em;">
+  &lt;script&gt;
+    var initData = &lt;?= json_encode($data); ?&gt;;
+  &lt;/script&gt;
+          </code></pre>
+          <div class="fragment">
+            <p>Good:</p>
+            <pre><code style="line-height: 1.1em;">
+  <span class="tag">&lt;script id="init_data" type="application/json"&gt;</span>
+    &lt;?= encodeForJSON(data); ?&gt;
+  &lt;/script&gt;
+  &lt;script&gt;
+    var jsonText =
+      document.getElementById('init_data').innerHTML;
+    var initData = JSON.parse(jsonText);
+  &lt;/script&gt;
+            </code></pre>
+          </div>
+        </section>
+        <section>
+          <pre><code>
+  function encodeForJSON($p) {
+    return json_encode($p,
+      JSON_HEX_TAG  | // &lt; &rarr; \u003C, &gt; &rarr; \u003E
+      JSON_HEX_APOS | // ' &rarr; \u0027
+      JSON_HEX_QUOT | // " &rarr; \u0022
+      JSON_HEX_AMP);  // &amp; &rarr; \u0026
+  }
+          </code></pre>
+          <aside class="notes">
+            This is also a good place to check for json_last_error()
+            and throw an exception.
+          </aside>
+        </section> -->
+        <section>
+          <h2>Recap</h2>
+          <h3>What I said while you were sleeping</h3>
+        </section>
+        <section>
+          <img src="images/kitten-with-yarn.jpg">
+          <h3>Proper string handling example</h3>
+        </section>
+        <section>
+          <h3>Rules of the road</h3>
+          <ul>
+            <li class="fragment">Use UTF-8</li>
+            <li class="fragment">Manipulation
+              <ul>
+                <li>Use str* when shuffling bytes</li>
+                <li>Use mb_strlen() for validation</li>
+                <li>Use mb_str*() for character handling</li>
+              </ul>
+            </li>
+            <li class="fragment">Sorting
+              <ul>
+                <li>Collator, not sort()</li>
+                <li>Accept mysql for what it is</li>
+                <li>String.localeCompare</li>
+              </ul>
+            </li>
+            <li class="fragment">Output
+              <ul>
+                <li><code style="font-size: 80%;">ini_set('default_charset', 'UTF-8')</code></li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+        <!--
+        <section>
+          <h2>There's more</h2>
+          <h3>And you won't like it</h3>
+        </section>
+        <section>
+          <section>
+            <h2>Editable HTML</h2>
+            <h3>I &hearts; 3<small><sup>rd</sup></small> party code</h3>
+          </section>
+          <section>
+            <h3 style="margin-bottom: 1em;">In the browser</h3>
+            <pre><code>
+  &lt;div contenteditable="true"&gt;
+    This text can be edited by the user.
+  &lt;/div&gt;
+            </code></pre>
+            <p class="fragment">
+              No formatting controls + broken paste = useless
+            </p>
+            <div class="fragment" style="margin-top: 1em;">
+              <p>Solution: JavaScript HTML editor component</p>
+              <ul>
+                <li>Lightweight: <a href="http://nicedit.com/" target="_blank">NicEdit</a> (35 KB)</li>
+                <li>Kitchen sink: <a href="http://ckeditor.com/" target="_blank">CKEditor</a> (&plusmn;500 KB)</li>
+              </ul>
+            </div>
+          </section>
+          <section>
+            <h3>In PHP</h3>
+            <p>Use <a href="http://htmlpurifier.org/" target="_blank">HTMLPurifier</a> (230 files, 20K+ lines)</p>
+            <pre><code>
+    require_once '/path/to/HTMLPurifier.auto.php';
+    $config = HTMLPurifier_Config::createDefault();
+    $purifier = new HTMLPurifier($config);
+    $clean_html = $purifier->purify($dirty_html);
+            </code></pre>
+          </section>
+          <section>
+            <h3>Gotcha</h3>
+            <ul>
+              <li class="fragment">Images
+              <ul>
+                <li>Data URI not properly supported in IE < 9</li>
+                <li>Where do you store the images?</li>
+                <li><a href="http://code.google.com/p/chromium/issues/detail?id=54815">Chrome</a> doesn't add resize handles</li>
+              </ul>
+              </li>
+              <li class="fragment">Paste
+              <ul>
+                <li>Image paste is <a href="http://stackoverflow.com/a/14909383/20980">tricky</a></li>
+                <li>Word paste is <a href="https://github.com/alohaeditor/Aloha-Editor/blob/dev/src/plugins/common/contenthandler/lib/wordcontenthandler.js">trickier</a></li>
+                <li>Paste image or text, not both</li>
+              </ul>
+              </li>
+            </ul>
+          </section>
+        </section>
+        <section>
+          idea: section on downloading files (filename)
+        </section>
+        -->
+        <section>
+          <h2>Thanks for stringing along</h2>
+
+          <p><a href="mailto:js@mcs.fm">js@mcs.fm</a></p>
+          <p><a href="http://github.com/jsebrech">http://github.com/jsebrech</a></p>
+          <p><a href="http://sebrechts.net/blog/">http://sebrechts.net/blog/</a></p>
+        </section>
+			</div>
+
+		</div>
+
+<!--
+
+Notes:
+
+ - PHP's ASCII parser: http://marc.info/?l=php-internals&m=119092476930074
+ - Proper collation in PHP: http://stackoverflow.com/a/9576230/20980
+ - sort() uses these compare functions:
+   - normally: string_compare_function
+   - locale: string_locale_compare_function
+ - sort() can use the current locale to sort, via setlocale()
+   - linux: setlocale(LC_COLLATE, 'en_US.UTF8');
+   - windows: does not support UTF8 in locale
+     http://msdn.microsoft.com/en-us/library/x99tb11d%28v=vs.80%29.aspx
+   - C locale info: http://en.wikipedia.org/wiki/C_localization_functions
+     The locale affects a ton of other functions (e.g. strftime)
+ - Comparing unicode strings in PHP
+   - http://stackoverflow.com/questions/6855425/comparing-two-unicode-strings-in-php
+   - Check out overlaying characters in unicode
+ - mbstring is buggy because it uses libmbfl instead of libicu
+   - Proposal to rewrite: https://wiki.php.net/rfc/altmbstring
+   - e.g. case not handled correctly by mb_stripos
+ - List of locales
+   http://framework.zend.com/manual/1.12/en/zend.locale.appendix.html
+
+-->
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'fade', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/runnable/runnable.js', async: true },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,889 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/sky.css">
+        
+        <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+    <style type="text/css">
+      h1.white-text, h2.white-text {
+        color: white;
+        text-shadow: 3px 3px 15px black;
+      }
+      h3.white-text, p.white-text {
+        color: white;
+        text-shadow: 2px 2px 10px black;
+      }
+    </style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+          <h1>On time</h1>
+          <h3>What every programmer should know about time</h3>
+          <p>
+            <small>Joeri Sebrechts / <a href="http://twitter.com/joeri_s">@joeri_s</a></small>
+          </p>
+        </section>
+        <section>
+          <section>
+            <h2>why time zones suck</h2>
+          </section>
+          <section>
+            <p>Every day has 24 hours.</p>
+            <div class="fragment">
+              Australia, Lord Howe's Island, April 2nd 2017<br>
+              24.5 hours
+            </div>
+          </section>
+          <section>
+            <p>Every non-DST day is 24 hours.</p>
+            <div class="fragment">
+              Russia, Kamchatka, March 28th 2010<br>
+              Putin kills 2 time zones.
+            </div>
+            <aside class="notes">
+              https://www.thrillist.com/travel/nation/world-time-zones-insane-facts-you-didn-t-know-about-time-zones
+            </aside>
+          </section>
+          <section>
+            <p>In GMT a day is 24 hours.</p>
+            <p class="fragment">
+              Greenwich observes British Summer Time.
+            </p>
+          </section>
+          <section>
+            <p>In UTC a day is 24 hours.</p>
+            <p class="fragment">Except if there is a leap second.</p>
+          </section>
+          <section>
+            <p>DST transitions twice a year.</p>
+            <div class="fragment">
+              <p>Morocco, 2014</p>
+              <table>
+                <tr><td>March 30</td><td>+1h</td></tr>
+                <tr><td>June 28</td><td>-1h</td></tr>
+                <tr><td>August 2</td><td>+1h</td></tr>
+                <tr><td>October 26</td><td>-1h</td></tr>
+              </table>
+            </div>
+            <aside class="notes">
+              In majority muslim countries like Morocco and Egypt,
+              they like to suspend DST during Ramadan so the day ends sooner.
+            </aside>
+          </section>
+          <section>
+            <p>If you know the local time, you know the UTC time.</p>
+            <p class="fragment">With DST the same hour occurs twice.</p>
+            <aside class="notes">
+              This is why ISO local time strings have an offset, not a time zone identifier.
+            </aside>
+          </section>
+          <section>
+            <p>Every time between 0:00 and 24:00 is valid.</p>
+            <p class="fragment">With DST, some hours don't exist.</p>
+          </section>
+          <section>
+            <p>Every date exists (in recent times).</p>
+            <div class="fragment">
+              <p>Samoa, december 30th 2011</p>
+            </div>
+            <aside class="notes">
+              This date did not exist in samoa because <a href="http://www.nytimes.com/2011/12/30/world/asia/samoa-to-skip-friday-and-switch-time-zones.html?_r=0">
+              it decided to move across the date line</a> to have more convenient trade with Asia.
+              This caused the date to jump from the 29th to the 31st.
+            </aside>
+          </section>
+          <section>
+            <p>But at least we know what the rules are.</p>
+            <p class="fragment">In 2014 the IANA TZ db changed 10 times.</p>
+            <aside class="notes">
+              Governments update the rules of time zones all the time,
+              often for political reasons, and not always in sensible ways.
+              The IANA time zone database changes get rolled into OS and application updates,
+              so they can take a while to hit your system.
+            </aside>
+          </section>
+          <section>
+            <p>We get proper notice of changes.</p>
+            <p class="fragment">Turkey, October 2015<br>DST rules change with 3 weeks notice.</p>
+            <aside class="notes">
+              Some TZ libraries missed the update, so that even up to date systems
+              experienced <a href="http://codeofmatt.com/2016/04/23/on-the-timing-of-time-zone-changes/">improper DST transitions</a>.
+            </aside>
+          </section>
+          <section>
+            <p>The date libraries handle all of that.</p>
+            <p class="fragment"><img src="img/nelsonhaha.jpg"></p>
+          </section>
+        </section>
+				<section data-background-image="img/universe.jpg">
+          <h1 class="white-text">I</h1>
+          <h2 class="white-text">What is time</h2>
+          <aside class="notes">
+            <p>
+              The universe is old: 13.77 billion years ± 59 million.
+              For aeons time passed without anyone noticing,
+              and then mankind started tracking time, which they did by observing
+              the movements of the heavenly bodies, the stars, the sun, the moon.
+            </p>
+            <dl>
+              <dt>sidereal year</dt>
+              <dd>as compared to the fixed stars: 365 d 6 h 9 min 9.76 s</dd>
+              <dt>tropical year = common year</dt>
+              <dd>time between vernal (spring) equinoxes: 365 days, 5 hours, 48 minutes</dd>
+            </dl>
+            <p>
+              Tropical 20 min. shorter due to precession of earth (wobble).
+              Length varies a little bit every year due to gravity of other planets.
+              Average long-term length is <strong>365.24219</strong> days.
+              The length of the year at the end of the 19th century was 365.242196 days,
+              while today it is 365.242190 days.
+            </p>
+          </aside>
+        </section>
+        <section>
+          <h3>13.0.4.17.19</h3>
+          <h3>6th of Kislev, 5778</h3>
+          <h3>III Id. Nov. MMDCCLXX</h3>
+          <aside class="notes">
+            May 31st 2017 in the <a href="http://research.famsi.org/date_mayaLC.php">Mayan</a>, 
+            <a href="https://www.hebcal.com/converter">Hebrew</a>, <a href="http://www.softhawkway.com/rcalc.htm">Julian</a> calendars.<br>
+            The 3rd day of the Ides of November in the year 2770,
+            because the Romans counted from the founding of Rome, <a href="https://www.theguardian.com/theguardian/2010/jan/13/how-ancient-rome-counted-years">753 BC</a>.
+            Actually, this date is november 11th in the Julian calendar, but we'll get to that.
+          </aside>
+        </section>
+        <section>
+          <table style="font-size: 70%;">
+            <tr><td>Martius</td><td>31</td></tr>
+            <tr><td>Aprilis</td><td>30</td></tr>
+            <tr><td>Maius</td><td>31</td></tr>
+            <tr><td>Junius</td><td>30</td></tr>
+            <tr><td>Quintilis</td><td>31</td></tr>
+            <tr><td>Sextilis</td><td>30</td></tr>
+            <tr><td>September</td><td>30</td></tr>
+            <tr><td>October</td><td>31</td></tr>
+            <tr><td>November</td><td>30</td></tr>
+            <tr><td>December</td><td>30</td></tr>
+            <tr><td>Intercalary</td><td>51</td></tr>
+          </table>
+          <aside class="notes">
+            The early roman calendar as claimed to come from Romulus,
+            but in actuality came from the Etruscans.
+            It descended from calendars that tracked the lunar cycle,
+            29.5 day per month (alternating 29 and 30),
+            but the days were made longer for unclear reasons.
+            The intercalary was meant to realign to the lunar and solar cycles,
+            but it was 10 days too short, which eventually put summer in winter.
+          </aside>
+        </section>
+        <section>
+          <table style="font-size: 70%;">
+            <tr><td>Ianuarius</td><td>29</td></tr>
+            <tr><td>Februarius</td><td>28</td></tr>
+            <tr><td>(Intercalary)</td><td>23</td></tr>
+            <tr><td>Martius</td><td>31</td></tr>
+            <tr><td>Aprilis</td><td>29</td></tr>
+            <tr><td>Maius</td><td>31</td></tr>
+            <tr><td>Iunius</td><td>29</td></tr>
+            <tr><td>Quintilis</td><td>31</td></tr>
+            <tr><td>Sextilis</td><td>29</td></tr>
+            <tr><td>September</td><td>29</td></tr>
+            <tr><td>October</td><td>31</td></tr>
+            <tr><td>November</td><td>29</td></tr>
+            <tr><td>December</td><td>29</td></tr>
+          </table>
+          <aside class="notes">
+            50 years after Rome was founded, King Pompilius Numa attempted to realign the year with the calendar,
+            by making the months add up to a year. However, the year only added up to 355 days,
+            so periodically an intercalary period was needed to realign the calendar.
+            The pontiff of the roman faith decided when and how long an intercalary should be,
+            which eventually got abused to keep allies in office longer.
+            This variability meant that in the provinces the exact date was often not known.
+          </aside>
+        </section>
+        <section>
+          <table style="font-size: 70%;">
+            <tr><td>Ianuarius</td><td>31</td></tr>
+            <tr><td>Februarius</td><td>28<strong>/29</strong></td></tr>
+            <tr><td>Martius</td><td>31</td></tr>
+            <tr><td>Aprilis</td><td>30</td></tr>
+            <tr><td>Maius</td><td>31</td></tr>
+            <tr><td>Iunius</td><td>30</td></tr>
+            <tr><td><strong>Iulius</strong></td><td>31</td></tr>
+            <tr><td><strong>Augustus</strong></td><td>31</td></tr>
+            <tr><td>September</td><td>30</td></tr>
+            <tr><td>October</td><td>31</td></tr>
+            <tr><td>November</td><td>30</td></tr>
+            <tr><td>December</td><td>31</td></tr>
+          </table>
+          <aside class="notes">
+            The abuse by the pontiffs led Julius Caesar didn't like this system due to its vagueness,
+            so he changed it to one we recognize now, except there was a leap year every 4 years,
+            which caused the calendar to drift against the solar year.
+            After caesar's death Mark Antony renamed Quintilis to Iulius to honor him.
+            Later Sextilis would be renamed to honor emperor Augustus.
+          </aside>
+        </section>
+        <section data-background-image="img/dionysius-exiguus.jpg" data-background-size="contain">
+          <h1 class="white-text">AD</h1>
+          <aside class="notes">
+            The <a href="https://en.wikipedia.org/wiki/Anno_Domini">AD calendar</a> wasn't conceived until 525 AD,
+            and popularized by Charlemagne around 800 AD.
+            Dionysius Exiguus, the monk who conceived it, made some errors
+            which cause Jesus to actually be born in 5 BC.
+            It was the dark ages after all.<br>
+            The AD system does not have a year zero, because it used roman numerals.
+            Astronomers do use a year zero, putting it at 1 BC in the AD system.
+          </aside>
+        </section>
+        <section>
+          <h3>Gregorian Calendar</h3>
+          <p>Thu, 4 October 1582 &rarr; Fri, 15 October 1582</p>
+          <table class="fragment" style="font-size: 80%;">
+            <tr><th>Year</th><th>Adopted</th><th>Days</th></tr>
+            <tr><td>1582</td><td>France (mostly), Italy, Poland, Portugal, Spain</td><td>10</td></tr>
+            <tr><td>1583</td><td>Austria, Germany (Catholic states)</td><td>10</td></tr>
+            <tr><td colspan="3">...</td></tr>
+            <tr><td>1923</td><td>Greece</td><td>13</td></tr>
+            <tr><td>1927</td><td>Turkey</td><td>13</td></tr>
+          </table>
+          <aside class="notes">
+            Pope Gregory's calendar introduced the leap year rule we now know:
+            Every year that is exactly divisible by four is a leap year, except for years that are exactly divisible by 100, but these centurial years are leap years if they are exactly divisible by 400.<br>
+            This calendar took a long time to be adopted by countries.
+            As a consequence, <strong>historical dates don't always mean what you think they do</strong>.<br>
+            This calendar drifts one day per 7700 years, meaning in 1.4 million years winter falls in summer.
+            Herschel's calendar fixes it by making multiples of 4000 not be leap years,
+            which drifts only one day per 30.000 years.
+          </aside>
+        </section>
+        <section>
+          <table>
+            <tr><th>dies</th><th>daeg</th><th>day</th></tr>
+            <tr><td>Solii</td><td>Sunnan</td><td>Sun</td></tr>
+            <tr><td>Lunae</td><td>Monan</td><td>Mon</td></tr>
+            <tr><td>Martis</td><td>Tiwes</td><td>Tue</td></tr>
+            <tr><td>Mercurii</td><td>Wodan</td><td>Wed</td></tr>
+            <tr><td>Iovis</td><td>Thor</td><td>Thu</td></tr>
+            <tr><td>Veneris</td><td>Freya</td><td>Fri</td></tr>
+            <tr><td>Saturnii</td><td>Sætern</td><td>Sat</td></tr>
+          </table>
+          <aside class="notes">
+            Many cultures used weeks to track the phases of the moon,
+            alternating 7 and 8 day weeks. The romans originally had an 8 day week,
+            inherited from the Etruscans.
+            However, for reasons which are not clear, the romans gradually
+            moved to a 7 day week, with the days named according to the
+            seven heavenly bodies visible with the naked eye.
+            The germanic tribes didn't particularly care for those names,
+            so they renamed most of them.
+          </aside>
+        </section>
+        <section>
+          <h2>gotcha</h2>
+          <h3>Twitter, December 29, 2014</h3>
+          <table class="fragment">
+            <tr><th>ISO week</th><th>from</th><th>until</th></tr>
+            <tr><td>2014-52</td><td>22 dec. 2014</td><td>28 dec. 2014</td></tr>
+            <tr><td>2015-01</td><td>29 dec. 2014</td><td>4 jan. 2015</td></tr>
+          </table>
+          <table class="fragment">
+            <tr><th>strftime</th><th>value</th></tr>
+            <tr><td>%G</td><td>4 digit ISO week year</td></tr>
+            <tr><td>%Y</td><td>4 digit calendar year</td></tr>
+          </table>
+          <aside class="notes">
+            On this date twitter's login went down for 5.5 hours.
+            Traditionally weeks started on sunday and were not numbered.
+            ISO standardized weeks as starting on monday and having numbers,
+            with the first week of a year containing the first thursday inside that year.
+            Due to this, the first week of 2015 started on december 29th.
+            Twitter's login code used %G instead of %Y to obtain the year,
+            and thought it was already 2015 when it was not.<br>
+            MCS got burned by a similar issue once too, be careful which
+            year flag you use when converting dates to strings.
+          </aside>
+        </section>
+        <section data-background-image="img/egyptian-sundial.jpg">
+          <h2 class="white-text">10 + 2</h2>
+          <h2 class="white-text">5 &times; 12</h2>
+          <aside class="notes">
+            Hours don't come from the romans but from the ancient egyptians.
+            They divided the day into 10 hours and 2 twilight hours,
+            then later the night hours were divided similarly.
+            Also later (~200 BC) the Greek astronomer Eratosthenes would divide
+            each hour into 60 minutes and each minute into 60 seconds.
+            The duodecimal (base 12) system is a pre-arabic system of counting,
+            easy to do because you count finger joints on your hand with your thumb.
+            The sexagesimal (base 60) system is convenient for expressing fractions.
+          </aside>
+        </section>
+        <section>
+          <h2>9 192 631 770</h2>
+          <h2>TAI</h2>
+          <aside class="notes">
+            The system of dividing a day into seconds produced a variable length second,
+            since days are variable length, and are slowly getting longer because
+            the tidal effect of the moon transfers momentum from the earth to the moon,
+            causing the earth to slow and the moon to speed up, and recede by 4 cm a year.
+            Thus, the SI system uses a fixed length second.<br>
+            1 SI second = the duration of 9 192 631 770 periods of the radiation corresponding to the transition between the two hyperfine levels of the ground state of the cesium 133 atom.
+            This corresponds to the estimated average length of a real second in 1820, a year for which they had good estimates.
+            The only truly accurate clocks are therefore the cesium-133-based atomic clocks.
+            About 400 of them form a weighted average called International Atomic Time,
+            which is the baseline for all our timekeeping.
+          </aside>
+        </section>
+        <section>
+          <h2>Leap seconds</h2>
+          <h2><del>CUT</del> <del>TUC</del> UTC</h2>
+          <aside class="notes">
+            However, since the length of a second is fixed, and the day is slowly growing longer,
+            this means that the SI day is a bit too short. For this reason,
+            the International Earth Rotation and Reference Systems Service (IERS)
+            decides about 6 months in advance when to add a leap second,
+            which adds one second to the latest minute of the day,
+            creating a 61 second minute.<br>
+            The result of adding leap seconds to TAI is UTC, coordinated universal time.
+            The british wanted CUT, the french wanted TUC, and UTC is the compromise
+            (actual reason for why that is the acronym). The leap second is added at midnight UTC,
+            so it falls in different times in different time zones.<br>
+            Gotcha: it's not possible to predict time to the second more than a year in advance,
+            because it is not known exactly when leap seconds will be needed.<br>
+            UTC is currently TAI + 37 seconds.
+          </aside>
+        </section>
+        <section>
+          <h2>Time zones</h2>
+          <div class="reveal">
+              <p><big style="font-size: 150%;">$$t_{local}  = tz(t_{utc})$$</big></p>
+              <table class="fragment" style="font-size: 70%;">
+                <tr><td>local date and time</td><td>- offset</td><td>= UTC</td></tr>
+                <tr><td>2017-11-24 T 12:00:00</td><td>+01:00</td><td>2017-11-24 T 11:00:00 Z</td></tr>
+              </table>
+          </div>
+          <aside class="notes">
+            A time zone identifier (e.g. "Europe/Brussels") determines a function or calculation rule.
+            This function takes a time in UTC and outputs a time in the local time for that time zone.
+            More accurately, it calculates the offset between UTC and local time at that instant in time,
+            which can then be added to UTC to get the local time. The process is not reversible, 
+            you cannot derive UTC from local time without knowing the offset (the result of the prior calculation).<br>
+            Regions not near the tropics tend to observe DST because it produces longer evenings.
+            DST was first coined by Ben Franklin and adopted in Germany in 1916,
+            mostly abandoned after WW2 due to cheap electrical lighting, and reintroduced during the energy crisis.
+          </aside>
+        </section>
+        <section data-background-image="img/clocks.jpg">
+          <h1 class="white-text">II</h1>
+          <h2 class="white-text">keeping time</h2>
+          <p class="white-text">(in computers)</p>
+          <aside class="notes">
+            Now that we have a firm grasp on the absurdity of what time is,
+            we are ready to move on to how computers keep the time.
+          </aside>
+        </section>
+        <section>
+          <h2>Gotcha</h2>
+          <p>August 2013, Deep Impact spacecraft lost</p>
+          <p>January 2010, Bank of Queensland terminals break</p>
+          <p>August 1999, GPS navigation devices broke</p>
+          <aside class="notes">
+            These three bugs all are caused by date representation issues.<br>
+            <a href="https://en.wikipedia.org/wiki/Deep_Impact_(spacecraft)#Contact_lost_and_end_of_mission">Deep Impact failed</a> because it tracked time as tenths of a second in 32-bit signed,
+            which overflowed on August 13.<br>
+            <a href="https://www.gizmodo.com.au/2010/01/so-banks-around-the-world-think-its-2016-too-this-cant-be-a-coincidence/">BoQ terminals</a> interpreted 2-digit BCD decimal as hexadecimal,
+            with 09 being the same in both, but 10 being interpreted as the year 2016.<br>
+            <a href="http://www.npl.co.uk/reference/faqs/when-and-what-is-the-gps-week-rollover-problem-(faq-time)">GPS has a 10-bit week counter</a>, which counted from january 6th 1980 and rolled over in 1999.
+            It rolls over again on April 6th 2019.<br>
+            So the way we represent time in computers really matters.
+          </aside>
+        </section>
+        <section data-background-image="img/kd14.jpg" data-background-size="contain">
+          <h2 class="white-text">C time_t</h2>
+          <table style="background-color: rgba(200, 200, 200, 0.7); font-size: 71%;">
+            <tr><td>Nov. 1971</td><td>Unix 1st ed.</td><td>32-bit signed counting 60ths of a second</td></tr>
+            <tr><td>Nov. 1973</td><td>Unix 4th ed.</td><td>32-bit signed counting seconds</td></tr>
+          </table>
+          <aside class="notes">
+            Ken Thompson and Dennis Ritchie working on the C port of Unix in 1972.<br>
+            1st edition unix was designed for the PDP-11/20, which had 24 KB of RAM,
+            so it needed an extremely compact way of representing time.<br>
+            The initial time representation of 1st ed. unix was linked to the rate of the system clock on the PDP-11.
+            It had epoch at january 1st 1971 and could represent 2.5 years of time. The epoch was moved several times.<br>
+            4th edition unix, ported to C, moved the epoch to 1st Jan. 1970 and counted seconds.
+          </aside>
+        </section>
+        <section>
+          <h1>Y2K38</h1>
+          <p>January 19 2038, 03:14:07 UTC</p>
+          <aside class="notes">
+            The 32-bit time_t value has a range from december 13 1901 to january 19 2038.
+            On this date <a href="https://en.wikipedia.org/wiki/Year_2038_problem">time_t will roll over</a> on this date.
+            This will cause software to think it is 1901.
+            Much software today still bakes in 32-bit time_t values, like the Ext3 filesystem, or the MySQL database.
+            There is <a href="https://kernelnewbies.org/y2038/vfs">on-going work in the linux kernel</a> to fix this issue.
+            The mac FHS+ filesystem has a date representation that rolls over in 2040,
+            which is one of the reasons Apple FS is replacing it in new OS updates.<br>
+            The C time_t is not a particularly bad time representation, but it has a limited range,
+            limited precision (whole seconds), and it does not handle time zones.
+            So modern systems should generally avoid it when possible.
+          </aside>
+        </section>
+        <section>
+          <h2>System time</h2>
+          <p>RTC / IRQ 8 - seconds</p>
+          <p>HPET - nanoseconds</p>
+          <aside class="notes">
+            The Real Time Clock is kept in hardware, battery-backed,
+            and allows the OS to get time with a resolution of seconds.
+            <a href="http://stackoverflow.com/questions/83728/what-interrupt-would-you-hook-from-dos-to-get-the-real-time-clock">IRQ8</a> is triggered several times a second with the latest value.<br>
+            The RTC is backed by a quartz crystal, which osscilates at a predictable frequency when voltage is applied to it.
+            The frequency varies with the temperature, which means this is not a precise or long-term reliable time source.<br>
+            The <a href="https://en.wikipedia.org/wiki/High_Precision_Event_Timer">high precision event timer</a> counts nanoseconds since CPU reset, highly precise and monotonic.
+            It is however not a clock, since you cannot obtain time from it.
+          </aside>
+        </section>
+        <section>
+          <h2>Gotcha</h2>
+          <p>VM clock drift</p>
+          <aside class="notes">
+            The RTC is semi-reliably in hardware, but becomes <a href="http://stackoverflow.com/questions/117422/how-can-i-resolve-the-drifting-clock-for-my-virtual-machine">less so in virtualization</a>.
+            It can slow down a lot of the host is overburdened and cannot execute the guest OS at full speed.
+            If you deploy NTP on both the host and guest, they can enter into duels, which gets ugly.
+            It is generally considered best practice to install the guest tools to synchronize the guest clock with the host,
+            and to run NTP only on the host.
+          </aside>
+        </section>
+        <section>
+          <h2>Network time</h2>
+          <p>NTP</p>
+          <p>GPS</p>
+          <aside class="notes">
+            The <a href="http://stackoverflow.com/questions/117422/how-can-i-resolve-the-drifting-clock-for-my-virtual-machine">NTP algorithm</a> continually adjusts the local clock to match the reference clock obtained from the time server.
+            If the delta is > 128 ms it sets the local clock, otherwise it <em>slews</em> it, speeding it up or down, by 0.5 ms per second.
+            The consequence is that you can't really know whether delta's you obtain from the clock are in any way reliable.<br>
+            Essentially the only reliable time source is an atomic clock. GPS satellites carry multiple rubidium atomic clocks.
+            If you use a GPS receiver you can get the time accurate to ~100 ns.<br>
+            Fun fact: <a href="http://www.astronomy.ohio-state.edu/~pogge/Ast162/Unit5/gps.html">GPS satellites are designed to run 38 micro-seconds per day too slow</a> when on earth
+            to compensate for the relativistic effects of the increased distance from the gravity mass of the earth (+45ms)
+            and the relative speed (-7ms) of being in orbit.<br>
+            Aside from having <a href="https://www.aliexpress.com/item/1PC-Atomic-clock-rubidium-FE5680-OCXO-frequency-converter-board-can-be-a-44-1kHz-50MHz/32729637106.html?spm=2114.40010508.4.8.zUJq0d">your own atomic clock</a> NTP and GPS are the only ways of keeping a clock reliable long-term.<br>
+            NTP allows you to get an accuracy of ~150 ms in practice. Google wanted to do better, so they use <a href="https://static.googleusercontent.com/media/research.google.com/nl//pubs/archive/45855.pdf">TrueTime</a> to get an accuracy of 7 ms.
+          </aside>
+        </section>
+        <section>
+          <h2>time representation</h2>
+          <p>wall clock time !== coordinated time</p>
+          <p>range !== precision</p>
+          <aside class="notes">
+            When it comes to a storage format for representing time,
+            we want multiple things. We want to be able to store coordinated time,
+            relative to UTC, but also wall clock time. In theory they are the same,
+            in practice due to delayed TZ db updated, misconfigured NTP, etc... they are not.
+            We also want to have a large range so we can represent all possible dates,
+            but not at the cost of precision, to store subsecond resolution.
+            All of these constraints make it hard to define a good representation.
+          </aside>
+        </section>
+        <section>
+          <h3>java.util.Date</h3>
+          <p>The good:<br>292 million BC - 292 million CE</p>
+          <div class="fragment">
+            <p>The ugly:</p>
+            <ul style="padding-left: 2em;">
+              <li>not a date</li>
+              <li>not a value</li>
+              <li>not TZ aware</li>
+              <li>no leap seconds</li>
+              <li>imprecise</li>
+              <li>months to 11</li>
+            </ul>
+          </div>
+          <aside class="notes">
+            In the rush to deliver Java 1.0 the java.util.Date class was thrown together by James Gosling.
+            It is an <a href="http://www.jroller.com/cpurdy/entry/the_seven_habits_of_highly">abomination</a>.
+            In essence it is a wrapper around a 64-bit long that counts milliseconds since the unix epoch.
+            It can't be used for correct date arithmetic, dealing with time zones, or string parsing / formatting.
+            For that you need the almost equally horrible java.util.Calendar.
+          </aside>
+        </section>
+        <section>
+          <h3>java date api</h3>
+          <pre><code lang="java">
+  Date();
+
+  @Deprecated
+  Date(int year, int month, int date, int hrs, int min, int sec)
+
+  long getTime();
+  void setTime(long time);
+
+  @Deprecated long parse(String s);
+  @Deprecated int getDate();
+  @Deprecated int getDay();
+  // ...
+          </code></pre>
+          <aside class="notes">
+            Pretty much immediately after shipping Java 1.0
+            Sun realized that this was a terrible API,
+            so they deprecated almost all of it in JAva 1.1
+            and made it a glorified number container.
+          </aside>
+        </section>
+        <section>
+            <h3>java.time</h3>
+            <p>does not suck</p>
+            <ul>
+              <li>
+                <p>Local and zoned time</p>
+                <pre style="margin-left: 0; margin-right: 0; width: 100%;"><code lang="php">
+  ZonedDateTime z = 
+    ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]")
+    .withZoneSameInstant(ZoneId.of("IST"));
+                </code></pre>
+              </li>
+              <li>  
+                <p>Parse and display</p>
+                <pre style="margin-left: 0; margin-right: 0; width: 100%;"><code lang="php">
+  System.out.println(
+    z.format(new DateTimeFormatter(ISO_OFFSET_DATE_TIME))
+  );
+  // 2007-12-03T14:45:30+05:30
+                </code></pre>
+              </li>
+            </ul>
+        </section>
+        <section>
+          <h2>JavaScript Date</h2>
+          <pre><code lang="javascript">
+  Date(year, month, date, hours, minutes, seconds, milliseconds)
+
+  getTime() // number
+  setTime(timeValue)
+
+  parse(dateString) // number
+  getDay()
+  getUTCDay()
+  // ...
+          </code></pre>
+          <aside class="notes">
+            While Java 1.0 was in development Sun partnered with Netscape,
+            and part of the deal was that JavaScript was a stepping stone to Java,
+            so during the 10 days that Brendan Eich had to create JavaScript
+            he liberally stole from the Java code, including the Date type and <a href="http://codeofmatt.com/2013/06/07/javascript-date-type-is-horribly-broken/">its flaws</a>.<br>
+            It is subtly better. It can do date arithmetic (setDate(getDate+1)),
+            and it has the UTC methods which allow you to work with UTC time.
+            This can't be used to work with time zones, since you don't know the current time zone (identifier),
+            you can't be sure DST rules are correctly applied for dates in history,
+            and you can't work in any other time zone than the local one (of the browser) and UTC.
+          </aside>
+        </section>
+        <section>
+          <h3>PHP</h3>
+          <p>legacy date is bad (32-bit)</p>
+          <p class="fragment">DateTime is ok</p>
+          <aside class="notes">
+            The legacy date functions work with a 32-bit signed int,
+            which means they suffer from the Y2K38 problem and cannot represent a date
+            prior to 1901.<br>
+            The DateTime class is however pretty much ok.
+          </aside>
+        </section>
+        <section>
+          <h3>PHP DateTime</h3>
+          <p>does not suck</p>
+          <ul>
+            <li>
+              <p>Local and zoned time</p>
+              <pre style="margin-left: 0; margin-right: 0; width: 100%;"><code lang="php">
+  $dt = new DateTimeImmutable("2017-05-31 20:00:00.000123",
+      new DateTimeZone("Europe/Brussels"));
+  echo $dt->format("Y-m-d H:i:s.u P"); // 2017-05-31 20:00:00.000123 +02:00
+              </code></pre>
+            </li>
+            <li>
+              <p>UTC time</p>
+              <pre style="margin-left: 0; margin-right: 0; width: 100%;"><code lang="php">
+  $dt = (new DateTimeImmutable("20:00Z"))
+      ->setDate(1000000, 5, 31);
+  echo $dt->format("Y-m-d H:i:s P"); // 1000000-05-31 20:00:00 +00:00
+              </code></pre>
+            </li>
+          </ul>
+          <aside class="notes">
+            PHP DateTime is a surprisingly good API.
+            It has a range 292 billion years in either direction,
+            can store microseconds, supports any time zone,
+            can parse any date format and produce any date format,
+            supports immutable values, and has an easy to use API.
+          </aside>
+        </section>
+        <section>
+          <h2>ANSI SQL92</h2>
+          <p>does not suck</p>
+          <table>
+            <tr><th>type</th><th>stores</th><th>shows</th></tr>
+            <tr><td>TIMESTAMP</td><td>UTC</td><td>session TZ</td></tr>
+            <tr><td>TS WITH TIME ZONE</td><td colspan="2">local date/time + offset</td></tr>
+            <tr><td>DATE</td><td colspan="2">local date</td></tr>
+            <tr><td>TIME</td><td colspan="2">local time</td></tr>
+          </table>
+          <aside class="notes">
+            Aside from the missing DATETIME type for storing local time, the SQL92 standard is sane.
+            It has types for conveniently storing UTC and zoned date+time, as well as local time.
+          </aside>
+        </section>
+        <section>
+          <h2>MySQL</h2>
+          <p>sucks</p>
+          <table>
+            <tr><th>type</th><th>stores</th><th>shows</th></tr>
+            <tr><td>TIMESTAMP</td><td>UTC (32-bit)</td><td>session TZ</td></tr>
+            <tr><td>DATETIME</td><td colspan="2">local date+time (no TZ)</td></tr>
+            <tr><td>DATE</td><td colspan="2">local date (0001 - 9999)</td></tr>
+            <tr><td>TIME</td><td colspan="2">local time (+ microsecs.)</td></tr>
+          </table>
+          <aside class="notes">
+            MySQL can store local date/time, but not with an offset.
+            It can store UTC time, but <a href="https://bugs.mysql.com/bug.php?id=12654">not beyond 2038</a>.
+            It can not store zoned time in any way.
+            Yes, MySQL really sucks.
+          </aside>
+        </section>
+        <section>
+          <h2>Postgres</h2>
+          <p>almost doesn't suck</p>
+          <table>
+            <tr><th>type</th><th>stores</th><th>shows</th></tr>
+            <tr><td>TIMESTAMP</td><td>UTC (64-bit)</td><td>session TZ</td></tr>
+            <tr><td>TS WITH TIME ZONE</td><td>UTC (64-bit)</td><td>session TZ</td></tr>
+            <tr><td>DATE</td><td colspan="2">local date</td></tr>
+            <tr><td>TIME</td><td colspan="2">local time</td></tr>
+          </table>
+          <aside class="notes">
+            Postgres implements the SQL92 standard, with a twist.
+            While it has even greater range than MySQL's datetime type (4713 BC to 294276 AD),
+            with microsecond precision, it has an odd behavior of the timestamp with time zone type.
+            Timestamp without time zone always interprets input strings in session time,
+            stores in UTC, and outputs back in session time. Timestamp with time zone
+            adds the twist of interpreting tz identifiers in input strings to allow inputting time
+            in a different time zone than the session time zone.
+          </aside>
+        </section>
+        <section>
+            <h2>Oracle</h3>
+            <p>doesn't suck?</p>
+            <table>
+            <tr><th>type</th><th>stores</th><th>shows</th></tr>
+            <tr><td>TIMESTAMP</td><td colspan="2">local date &amp; time <small style="position: relative; top: 0.7em;">(11 byte)</small></td></tr>
+            <tr><td>TS WITH TIME ZONE</td><td>TS TZ</td><td>TS TZ</td></tr>
+            <tr><td>TS WITH LOCAL TZ</td><td>UTC</td><td>session TZ</td></tr>
+            <tr><td>DATE</td><td colspan="2">local date &amp; time</td></tr>
+            <tr><td><del>TIME</del></td><td colspan="2">&nbsp;</td></tr>
+          </table>
+          <aside class="notes">
+            Oracle supports a very wide range of dates, and the timestamp types support fractional seconds as well.
+            Timestamp stores local date and time and does not adjust it.
+            Timestamp with local time zone converts session TZ to UTC and vice versa, 
+            so it is very convenient for dealing with moments in time that you want
+            to represent in the time zone of the current user (= session time zone).
+            Timestamp with time zone stores the offset along with the UTC time, so both
+            local time when the time was inserted and UTC time are known, which covers all needs.
+            Finally the date field stores local date and time. There is no support for the ANSI SQL TIME type,
+            but that's mostly ok because the DATE field can be used and its date component ignored.
+            Surprisingly, despite not implementing the standard properly, Oracle covers all needs pretty efficiently.
+          </aside>
+        </section>
+        <section>
+          <h2>Gotcha</h2>
+          <p>Burundi passport birth date</p>
+          <blockquote class="fragment" cite="http://www.refworld.org/docid/4f968a642.html">
+            the letter "x" is sometimes used instead of the day and month of birth
+          </blockquote>
+          <aside class="notes">
+            It turns out that some people only have a birth year, not a birth date.
+            You find this in Asia and Central Africa, and you do run across this in practice.
+            Storing birth dates is therefore notoriously tricky, and best not done with a date type.
+          </aside>
+        </section>
+        <section data-background-image="img/digitalclock.jpg">
+          <h1 class="white-text">III</h1>
+          <h2 class="white-text">programming time</h2>
+        </section>
+        <section>
+          <h2>Strategies</h2>
+          <ul style="padding-left: 1em;">
+            <li class="fragment">Always coordinated</li>
+            <li class="fragment">Local + offset for wall clock</li>
+            <li class="fragment">Single source of time</li>
+            <li class="fragment">DRY, pure and tested</li>
+            <div class="fragment">
+              <li>2017-05-31T21:00:00+02:00</li>
+              <li><del>1496257200</del></li>
+            </div>
+          </ul>
+          <aside class="notes">
+            Where possible always work in coordinated time,
+            either UTC or zoned time convertible to UTC.
+            If you need to keep wall clock time, then use local time + an offset to store it,
+            so that it remains convertible to UTC.<br>
+            Try to use only one source of time, to avoid synchronization issues
+            between the different time sources (e.g. trying to edit a future item).<br>
+            Try to centralize your time handling code in a way that is easy to test,
+            generally it is best to put time manipulation and calculation code in separate
+            classes or functions, to keep that pure (not mixed with side effects or other concerns),
+            and to use immutable date/time values.<br>
+            Use the <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601 date/time format</a> instead of the unix timestamp.
+            It can store time with a higher range, and can store both UTC
+            and zoned time keeping track of the offset relative to UTC.<br>
+            Don't worry too much about edge cases like leap seconds and DST.
+            In practice it doesn't matter whether you support them correctly.
+          </aside>
+        </section>
+        <section>
+          <h2>SQL Strategies</h2>
+          <ul>
+            <li class="fragment">TIMESTAMP</li>
+            <li class="fragment">TS w/ (LOCAL) TZ or VARCHAR (ISO 8601)</li>
+            <li class="fragment"><code>CURRENT_TIMESTAMP()</code></li>
+            <li class="fragment">set <em>session</em> time zone</li>
+          </ul>
+          <aside class="notes">
+            By default always use the TIMESTAMP type, since it stores as UTC
+            but displays as local time, which is usually what you want.<br>
+            When you have a need to store actual local time,
+            use a format that is convertible to ISO 8601 (has an offset),
+            TS w/ TZ when it is available (TS w/ LOCAL TZ in oracle), 
+            and VARCHAR otherwise (storing an ISO timestamp).<br>
+            Use the database as your time source, and use the SQL92 CURRENT_TIMESTAMP() function
+            to do so. It is available in all databases and returns a TIMESTAMP WITH TIME ZONE
+            for databases that support that type. It is also replication-safe, so it will
+            give consistent time in clustered databases.<br>
+            All of this magic only works if you set the DB session time zone when you create
+            the database connection.
+          </aside>
+        </section>
+        <section>
+          <h2>PHP Strategies</h2>
+          <ul>
+            <li class="fragment">DateTime<span style="opacity: 0.6;">Immutable</span></li>
+            <li class="fragment"><em>Now</em> from the DB</li>
+            <li class="fragment"><code>date_default_timezone_set()</code></li>
+          </ul>
+          <aside class="notes">
+            You want to use the DateTime class instead of the legacy date functions,
+            and preferably the DateTimeImmutable class to avoid having values modified
+            that you didn't expect to be modified.<br>
+            It is always best to have a single source of time, and the database is the best candidate.
+            Therefore, it is a good idea to always obtain "now" from the database
+            using the <code>CURRENT_TIMESTAMP()</code> SQL function.<br>
+            Finally, it is best practice to set your default PHP timezone (for new DateTime values)
+            on every request. The best approach for multi time zone software is storing the time zone
+            in the user's profile (where they can change it), and then using that as the PHP time zone,
+            setting it on every request, and as the DB session time zone, setting it on every connection.
+          </aside>
+        </section>
+        <section>
+          <h2>JavaScript strategies</h2>
+          <ul>
+            <li class="fragment"><em>Avoid</em> when possible</li>
+            <li class="fragment"><code>moment-timezone</code> instead of <code>Date</code></li>
+            <li class="fragment"><em>Now</em> from the server</li>
+            <li class="fragment"><code>window.performance.now()</code> for profiling</li>
+          </ul>
+          <aside class="notes">
+            When possible, avoid doing date arithmetic in JavaScript. Date is a terrible API,
+            and it has no alternative (everything else wraps it). If you must do so,
+            then use the momentjs library with the <a href="https://momentjs.com/timezone/">moment-timezone</a> extension.<br>
+            Obtain the current time from the server (ultimately the database) to ensure consistent time
+            across clients, since you never know whether a client's clock is correct.<br>
+            Finally use the window.performance.now() api when measuring elapsed time for profiling purposes,
+            since it has microsecond resolution and is guaranteed to be linearly increasing at a rate of one second per second.
+            PHP has no alternative for window.performance.now(), so you're stuck with querying the clock via DateTime,
+            which can behave unpredictably.
+          </aside>
+        </section>
+        <section>
+          <h2>Testing strategies</h2>
+          <ul>
+            <li class="fragment">Inject <em>now</em></li>
+            <li class="fragment">Test the future <em>in the past</em></li>
+            <li class="fragment">Use <em>interesting</em> dates</li>
+          </ul>
+          <aside class="notes">
+            You want to cover your date/time handling code with tests,
+            but you don't want those tests to be brittle. Having a random element like <em>now</em>
+            in those tests can cause brittle behavior, so it is best to design the code
+            so that you can inject a different value of <em>now</em> for test purposes.<br>
+            Then, with that ability, you can put now at some point in the past,
+            so that you can write tests that deal with past, present and future entirely in the past.
+            The advantage is that calendar rules never change in the past,
+            so you can reliably bake the desired behavior into your tests.<br>
+            Finally, try to not just test the golden path, but test interesting boundary conditions,
+            like around the new year, or on a leap day. Don't sweat the small stuff like leap seconds
+            and DST, they rarely lead to significant bugs anyway.
+          </aside>
+        </section>
+        <section data-background-image="img/doctor-who.jpg" data-background-color="#001000">
+          <div style="text-align: left; margin-top: 0;">
+            <h1 class="white-text">Thank you</h1>
+            <h3 class="white-text">for your time</h3>
+            <h3 class="white-text" style="margin-top: 1em; margin-bottom: 1em;">questions?</h3>
+            <br>
+            <br>
+          </div>
+        </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+      var printPdf = window.location.search.match( /print-pdf/gi );
+
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+        history: true,
+        showNotes: printPdf,
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+                    { src: 'plugin/math/math.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+
+      // enable pdf print stylesheet if ?print-pdf is specified in url
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = printPdf ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</body>
+</html>
