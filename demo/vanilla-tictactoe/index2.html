@@ -1,0 +1,238 @@
+<!doctype html>
+<html>
+<head>
+    <title>Tic Tac Toe</title>
+</head>
+<body>
+    <!-- 
+    vanilla version of https://react.dev/learn/tutorial-tic-tac-toe
+    for multi-file version see index.html
+    -->
+    <script>
+        customElements.define('x-square', class Square extends HTMLElement {
+            connectedCallback() {
+                const button = document.createElement('button');
+                button.className = 'square';
+                button.textContent = this.getAttribute('value');
+                button.onclick = () => this.dispatchEvent(new CustomEvent('squareclick'));
+                this.appendChild(button);
+            }
+        });
+
+        customElements.define('x-board', class Board extends HTMLElement {
+            update(xIsNext, squares) {
+                const winner = calculateWinner(squares);
+                let status;
+                if (winner) {
+                    status = 'Winner: ' + winner;
+                } else {
+                    status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+                }
+
+                this.innerHTML = `
+                    <div class="status">${status}</div>
+                    <div class="board-row">
+                        <x-square value="${squares[0]}" data-index="0"></x-square>
+                        <x-square value="${squares[1]}" data-index="1"></x-square>
+                        <x-square value="${squares[2]}" data-index="2"></x-square>
+                    </div>
+                    <div class="board-row">
+                        <x-square value="${squares[3]}" data-index="3"></x-square>
+                        <x-square value="${squares[4]}" data-index="4"></x-square>
+                        <x-square value="${squares[5]}" data-index="5"></x-square>
+                    </div>
+                    <div class="board-row">
+                        <x-square value="${squares[6]}" data-index="6"></x-square>
+                        <x-square value="${squares[7]}" data-index="7"></x-square>
+                        <x-square value="${squares[8]}" data-index="8"></x-square>
+                    </div>
+                `;
+
+                this.querySelectorAll('x-square').forEach(_ => {
+                    _.addEventListener('squareclick', () => {
+                        const i = _.dataset.index;
+                        if (calculateWinner(squares) || squares[i]) return;
+                        const nextSquares = squares.slice();
+                        if (xIsNext) {
+                            nextSquares[i] = 'X';
+                        } else {
+                            nextSquares[i] = 'O';
+                        }
+                        this.dispatchEvent(new CustomEvent('play', { detail: { nextSquares }}));
+                    });
+                });
+            }
+        });
+
+        customElements.define('x-game', class Game extends HTMLElement {
+            #history = [Array(9).fill('')];
+            #currentMove = 0;
+            get xIsNext() { return this.#currentMove % 2 === 0; }
+            get currentSquares() { return this.#history[this.#currentMove]; }
+            get board() { return this.querySelector('x-board'); }
+
+            connectedCallback() {
+                this.innerHTML = `
+                    <div class="game">
+                        <x-board></x-board>
+                        <div class="game-info">
+                            <ol></ol>
+                        </div>
+                    </div>
+                `;
+                this.board.addEventListener('play', this.handlePlay.bind(this))
+                this.update();
+            }
+
+            handlePlay(e) {
+                const { nextSquares } = e.detail;
+                const nextHistory = [...this.#history.slice(0, this.#currentMove + 1), nextSquares];
+                this.#history = nextHistory;
+                this.#currentMove = nextHistory.length - 1;
+                this.update();
+            }
+
+            update() {
+                this.board.update(this.xIsNext, this.currentSquares);
+
+                const moves = this.#history.map((squares, move) => {
+                    let description;
+                    if (move > 0) {
+                        description = 'Go to move #' + move;
+                    } else {
+                        description = 'Go to game start';
+                    }
+                    return `
+                        <li>
+                            <button data-index="${move}">${description}</button>
+                        </li>
+                    `;
+                });
+
+                const movesList = this.querySelector('ol');
+                movesList.innerHTML = moves.join('');
+                movesList.querySelectorAll('button').forEach(button => {
+                    button.addEventListener('click', () => {
+                        this.#currentMove = button.dataset.index;
+                        this.update();
+                    });
+                });
+            }
+        });
+
+        function calculateWinner(squares) {
+            const lines = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6],
+            ];
+            for (let i = 0; i < lines.length; i++) {
+                const [a, b, c] = lines[i];
+                if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+                return squares[a];
+                }
+            }
+            return null;
+        }
+    </script>
+    <x-game></x-game>
+</body>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: sans-serif;
+        margin: 20px;
+        padding: 0;
+    }
+    
+    h1 {
+        margin-top: 0;
+        font-size: 22px;
+    }
+    
+    h2 {
+        margin-top: 0;
+        font-size: 20px;
+    }
+    
+    h3 {
+        margin-top: 0;
+        font-size: 18px;
+    }
+    
+    h4 {
+        margin-top: 0;
+        font-size: 16px;
+    }
+    
+    h5 {
+        margin-top: 0;
+        font-size: 14px;
+    }
+    
+    h6 {
+        margin-top: 0;
+        font-size: 12px;
+    }
+    
+    code {
+        font-size: 1.2em;
+    }
+    
+    ul {
+        padding-inline-start: 20px;
+    }
+    
+    * {
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: sans-serif;
+        margin: 20px;
+        padding: 0;
+    }
+    
+    .square {
+        background: #fff;
+        border: 1px solid #999;
+        float: left;
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 34px;
+        height: 34px;
+        margin-right: -1px;
+        margin-top: -1px;
+        padding: 0;
+        text-align: center;
+        width: 34px;
+    }
+    
+    .board-row:after {
+        clear: both;
+        content: '';
+        display: table;
+    }
+    
+    .status {
+        margin-bottom: 10px;
+    }
+    .game {
+        display: flex;
+        flex-direction: row;
+    }
+    
+    .game-info {
+        margin-left: 20px;
+    }
+    
+</style>
+</html>
