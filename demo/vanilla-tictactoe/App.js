@@ -102,7 +102,7 @@ class Game extends HTMLElement {
         movesList.innerHTML = moves.join('');
         movesList.querySelectorAll('button').forEach(button => {
             button.addEventListener('click', () => {
-                this.#currentMove = button.dataset.index;
+                this.#currentMove = +button.dataset.index;
                 this.update();
             });
         });
