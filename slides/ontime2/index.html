@@ -368,6 +368,62 @@
 							to handle in computer software, it was decided to phase out leap seconds by 2035.
 						</aside>
 					</section>
+					<section data-background-image="img/time-zones.png" class="text-shadow-light">
+						<h2>Time zones</h2>
+						<table style="background-color: rgba(255, 255, 255, 0.6); font-size: 70%">
+							<thead>
+								<tr>
+									<th>Time Zone</th>
+									<th>Description</th>
+									<th>Offset</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>UTC</td>
+									<td>Coordinated Universal Time</td>
+									<td>UTC+00</td>
+								</tr>
+								<tr>
+									<td>America/New_York</td>
+									<td>Eastern Time (US &amp; Canada)</td>
+									<td>UTC-05</td>
+								</tr>
+								<tr>
+									<td>America/Chicago</td>
+									<td>Central Time (US &amp; Canada)</td>
+									<td>UTC-06</td>
+								</tr>
+								<tr>
+									<td>America/Los_Angeles</td>
+									<td>Pacific Time (US &amp; Canada)</td>
+									<td>UTC-08</td>
+								</tr>
+								<tr>
+									<td>Europe/London</td>
+									<td>Greenwich Mean Time (UK)</td>
+									<td>UTC+00</td>
+								</tr>
+								<tr>
+									<td>Europe/Brussels</td>
+									<td>Central European Time (Belgium)</td>
+									<td>UTC+01</td>
+								</tr>
+								<tr>
+									<td>Asia/Dubai</td>
+									<td>Gulf Standard Time (UAE)</td>
+									<td>UTC+04</td>
+								</tr>
+								<tr>
+									<td>Asia/Shanghai</td>
+									<td>China Standard Time</td>
+									<td>UTC+08</td>
+								</tr>
+								<tr>
+									<td colspan="3" style="text-align: center">...</td>
+							</tbody>
+						</table>
+					</section>
 				</section>
 				<section>
 					<section data-background-image="img/time-zones.png" class="text-shadow-light">
@@ -377,18 +433,18 @@
 					<section>
 						<p>Every day has 24 hours</p>
 						<div class="fragment">
-						Australia, Lord Howe's Island, April 2nd 2017<br>
-						24.5 hours
+						<code>Australia/Lord_Howe</code>, April 2nd 2017<br>
+						24.5 hours (DST)
 						</div>
 					</section>
 					<section>
 						<p>Every non-DST day is 24 hours</p>
 						<div class="fragment">
-						Russia, Kamchatka, March 28th 2010<br>
-						Putin kills 2 time zones
+							Libya, November 10th 2012<br>
+							25 hour day (EET &rarr; CET)
 						</div>
 						<aside class="notes">
-						https://www.thrillist.com/travel/nation/world-time-zones-insane-facts-you-didn-t-know-about-time-zones
+							https://www.timeanddate.com/news/time/libya-time-zone-change-2012.html
 						</aside>
 					</section>
 					<section>
@@ -442,11 +498,13 @@
 					<section>
 						<p>But at least we know what the rules are</p>
 						<p class="fragment">In 2022 the IANA TZ database changed 7 times</p>
+						<p class="fragment">Updates can take a year to propagate</p>
 						<aside class="notes">
 						Governments update the rules of time zones all the time,
 						often for political reasons, and not always in sensible ways.
 						The IANA time zone database changes get rolled into OS and application updates,
-						so they can take a while to hit your system.
+						so they can take a while to hit your system. IANA indicates this process can take a year or more.
+						https://www.icann.org/en/blogs/details/how-time-zones-are-coordinated-13-03-2023-en
 						</aside>
 					</section>
 					<section>
@@ -463,15 +521,16 @@
 					</section>
 					<section>
 						<h2>what <em>are</em> time zones?</h2>
-						<br>
-						<h2>
-							<math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>t</mi><mrow><mi>l</mi><mi>o</mi><mi>c</mi><mi>a</mi><mi>l</mi></mrow></msub><mo>=</mo><mi>t</mi><mi>z</mi><mo>(</mo><msub><mi>t</mi><mrow><mi>u</mi><mi>t</mi><mi>c</mi></mrow></msub><mo>)</mo></math>
-						</h2>
-						<br>
-						<table style="font-size: 70%;">
-							<tr><td>UTC</td><td>+ offset</td><td>= local time</td></tr>
-							<tr><td>2017-11-24T11:00:00Z</td><td>+01:00</td><td>2017-11-24T12:00:00+01:00</td></tr>
-						</table>
+						<h2 class="fragment">political decisions</h2>
+						<div class="fragment">
+							<h2 style="margin: 0.5em 0; ">
+								<math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>t</mi><mrow><mi>l</mi><mi>o</mi><mi>c</mi><mi>a</mi><mi>l</mi></mrow></msub><mo>=</mo><mi>t</mi><mi>z</mi><mo>(</mo><msub><mi>t</mi><mrow><mi>u</mi><mi>t</mi><mi>c</mi></mrow></msub><mo>)</mo></math>
+							</h2>
+							<table style="font-size: 70%;">
+								<tr><td>UTC</td><td>+ offset</td><td>= local time</td></tr>
+								<tr><td>2017-11-24T11:00:00Z</td><td>+01:00</td><td>2017-11-24T12:00:00+01:00</td></tr>
+							</table>
+						</div>
 						<aside class="notes">
 							A time zone identifier (e.g. "Europe/Brussels") determines a function or calculation rule.
 							This function takes a time in UTC and outputs a time in the local time for that time zone.
@@ -570,7 +629,7 @@
 					</section>
 					<section data-background-image="img/kd14.jpg" data-background-size="contain">
 						<h2 class="text-white text-shadow">C time_t</h2>
-						<table style="background-color: rgba(200, 200, 200, 0.7); font-size: 71%;">
+						<table class="text-shadow-light" style="background-color: rgba(255, 255, 255, 0.6); font-size: 71%;">
 							<tr><td>Nov. 1971</td><td>Unix 1st ed.</td><td>32-bit signed, 60ths of a second</td></tr>
 							<tr><td>Nov. 1973</td><td>Unix 4th ed.</td><td>32-bit signed, seconds</td></tr>
 						</table>
@@ -640,7 +699,7 @@
 							const el = document.getElementById("iso_timestamp");
 							setInterval(() => {
 								const now = new Date();
-								const nowTemporal = Temporal && Temporal.Now;
+								const nowTemporal = window.Temporal && Temporal.Now;
 								el.innerHTML = 
 									'"' + now.toISOString().split('T')[0] + '"<br>' +
 									'"' + now.toISOString().split('.').toSpliced(1, 1, '000Z').join('.') + '"' +
@@ -769,6 +828,72 @@
 							and handles every use case, but make sure you ship a polyfill until browsers catch up.
 							<br>
 							Source: https://javascript.plainenglish.io/%EF%B8%8F-goodbye-date-hello-temporal-the-future-of-time-in-javascript-has-arrived-6283773ffa3b
+						</aside>
+					</section>
+					<section>
+						<h2>Right on time</h2>
+						<table style="font-size: 70%">
+							<tr><th>&nbsp;</th><th>Preferred</th><th>Fallback</th></tr>								
+							<tr>
+								<td>"Now"</td><td>Database time</td><td>Server time</td>
+							</tr>
+							<tr>
+								<td>SQL</td>
+								<td><code>timestamp with time zone</code><br><code>datetimeoffset</code></td>
+								<td>ISO 8601 <code>varchar</code>
+							</tr>
+							<tr>
+								<td>JavaScript</td>
+								<td><code>Temporal</code></td><td><code>Date</code></td>
+							</tr>
+							<tr>
+								<td>.NET</td>
+								<td><code>NodaTime</code></td><td><code>DateTimeOffset</code></td>
+							</tr>
+							<tr>
+								<td>Java</td>
+								<td><code>java.time.*</code></td><td><code>java.util.Date</code></td>
+							</tr>
+							<tr>
+								<td>Python</td>
+								<td><code>pendulum</code></td><td><code>datetime+pytz</code></td>
+							</tr>
+						</table>
+						<aside class="notes">
+							When needing to know the current time in a typical web application, 
+							the best place to get it from is the server,
+							because you don't know what time and time zone settings the client has.
+							If multiple servers are involved, you should try to get the time from a single source,
+							and typically the database is the best place to get it from.
+							Similarly time zone offset calculations are best all done in the same place,
+							to avoid IANA timezone database mismatches between servers.<br>
+							When building internationalized applications it is often a good idea to give the 
+							user the ability to change their time zone on their profile, 
+							and adjust all time-based code to work in that time zone.<br>
+							For the various programming languages is listed here what the preferred strategy is
+							to work with timezone-aware date/time representations, and a possible fallback
+							in cases where the preferred is not an option.
+						</aside>
+					</section>
+					<section>
+						<h2>Test of time</h2>
+						<ul>
+							<li>Inject <em>now</em></li>
+							<li>Test the future <em>in the past</em></li>
+							<li>Use <em>interesting</em> dates</li>
+						</ul>
+						<aside class="notes">
+							You want to cover your date/time handling code with tests,
+							but you don't want those tests to be brittle. Having a random element like <em>now</em>
+							in those tests can cause brittle behavior, so it is best to design the code
+							so that you can inject a different value of <em>now</em> for test purposes.<br>
+							Then, with that ability, you can put now at some point in the past,
+							so that you can write tests that deal with past, present and future entirely in the past.
+							The advantage is that calendar rules never change in the past,
+							so you can reliably bake the desired behavior into your tests.<br>
+							Finally, try to not just test the golden path, but test interesting boundary conditions,
+							like around the new year, or on a leap day. Don't sweat the small stuff like leap seconds
+							and DST, they rarely lead to significant bugs anyway.
 						</aside>
 					</section>
 				</section>
