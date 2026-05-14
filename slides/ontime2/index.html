@@ -50,16 +50,16 @@
 					<section data-background-image="img/solarsystem.webp" class="text-white text-shadow">
 						<h2>Cycles</h2>
 						<dl>
-							<dt>Year (sidereal)</dt>
-							<dd>Earth around the stars (365d 6h 9m)</dd>
-							<dt>Year (tropical)</dt>
-							<dd>Earth around the sun (365d 5h 48m)</dd>
-							<dt>Month</dt>
-							<dd>Moon around the earth (29.5d)</dd>
-							<dt>Week</dt>
-							<dd>Moon phase (7.3d)</dd>
 							<dt>Day</dt>
-							<dd>Earth around its axis</dd>
+							<dd>Light/dark cycle</dd>
+							<dt>Week</dt>
+							<dd>Lunar phase (7.3d)</dd>
+							<dt>Month</dt>
+							<dd>Lunar cycle (29.5d)</dd>
+							<dt>Year (sidereal)</dt>
+							<dd>Earth cycles the stars (365d 6h 9m)</dd>
+							<dt>Year (tropical)</dt>
+							<dd>Earth cycles the sun (365d 5h 48m)</dd>
 						</dl>
 						<aside class="notes">
 							Early humans saw the cycles of natures, and used them to track time.
@@ -101,8 +101,8 @@
 						<h3>Numa Pompilius' calendar</h3>
 						<table style="font-size: 60%;">
 							<tr><td>Ianuarius</td><td>29</td></tr>
-							<tr><td>Februarius</td><td>28</td></tr>
-							<tr style="opacity: 0.5"><td>(Intercalary)</td><td>23</td></tr>
+							<tr><td>Februarius</td><td>28<span style="opacity: 0.5">/23</span></td></tr>
+							<tr style="opacity: 0.5"><td>(Intercalary)</td><td>?</td></tr>
 							<tr><td>Martius</td><td>31</td></tr>
 							<tr><td>Aprilis</td><td>29</td></tr>
 							<tr><td>Maius</td><td>31</td></tr>
@@ -276,7 +276,7 @@
 						</aside>
 					</section>
 					<section>
-						<h2>Hours and minutes</h2>
+						<h2>Hours, minutes, seconds</h2>
 						<table><tr>
 							<td>
 								<img src="img/egyptian-sundial.jpg" alt="Egyptian sundial" width="350"/>
@@ -463,9 +463,9 @@
 						<p>Morocco, 2014</p>
 						<table>
 							<tr><td>March 30</td><td>+1h</td></tr>
-							<tr><td>June 28</td><td>-1h</td></tr>
+							<tr><td>June 28</td><td>&ndash;1h</td></tr>
 							<tr><td>August 2</td><td>+1h</td></tr>
-							<tr><td>October 26</td><td>-1h</td></tr>
+							<tr><td>October 26</td><td>&ndash;1h</td></tr>
 						</table>
 						</div>
 						<aside class="notes">
@@ -497,8 +497,10 @@
 					</section>
 					<section>
 						<p>But at least we know what the rules are</p>
-						<p class="fragment">In 2022 the IANA TZ database changed 7 times</p>
-						<p class="fragment">Updates can take a year to propagate</p>
+						<div class="fragment">
+						<p>In 2022 the IANA TZ database changed 7 times</p>
+						<p>Updates can take a year to propagate</p>
+						</div>
 						<aside class="notes">
 						Governments update the rules of time zones all the time,
 						often for political reasons, and not always in sensible ways.
@@ -509,7 +511,10 @@
 					</section>
 					<section>
 						<p>We get proper notice of changes</p>
-						<p class="fragment">Turkey, October 2015<br>DST rules change with 3 weeks notice.</p>
+						<div class="fragment">
+							<p>Turkey, October 2015</p>
+							<p>DST rules change with 3 weeks notice.</p>
+						</div>
 						<aside class="notes">
 						Some TZ libraries missed the update, so that even up to date systems
 						experienced <a href="http://codeofmatt.com/2016/04/23/on-the-timing-of-time-zone-changes/">improper DST transitions</a>.
@@ -658,11 +663,11 @@
 					</section>
 					<section>
 						<h2>Unix time</h2>
-						<table>
-							<tr><th>Pro</th><th>Con</th></tr>
-							<tr><td>4 or 8 bytes</td><td>Y2K38</td></tr>
-							<tr><td>UTC</td><td>No local time</td></tr>
-							<tr><td>Continuous</td><td>Seconds</td></tr>
+						<table style="position: relative; left: 0.3em;">
+							<tr><th style="text-align: right">Pro</th><th>Con</th></tr>
+							<tr><td style="text-align: right">4 or 8 bytes</td><td>Y2K38</td></tr>
+							<tr><td style="text-align: right">UTC</td><td>No local time</td></tr>
+							<tr><td style="text-align: right">Continuous</td><td>Seconds</td></tr>
 						</table>
 						<aside class="notes">
 							Summarizing unix time, its benefit is its compact representation,
@@ -677,11 +682,11 @@
 						<p>
 							<code id="iso_timestamp" style="font-size: 80%;">&nbsp;<br>&nbsp;<br>&nbsp;</code>
 						</p>
-						<table>
-							<tr><th>Pro</th><th>Con</th></tr>
-							<tr><td>Precise</td><td>Storage size</td></tr>
-							<tr><td>Zoned time</td><td>Math is hard</td></tr>
-							<tr><td>ISO standard</td><td>Many variations</td></tr>
+						<table style="position: relative; left: 5px;">
+							<tr><th style="text-align: right">Pro</th><th>Con</th></tr>
+							<tr><td style="text-align: right">Precise</td><td>Storage size</td></tr>
+							<tr><td style="text-align: right">Zoned time</td><td>Math is hard</td></tr>
+							<tr><td style="text-align: right">ISO standard</td><td>Many variations</td></tr>
 						</table>
 						<aside class="notes">
 							The more flexible and modern universal way of representing time 
